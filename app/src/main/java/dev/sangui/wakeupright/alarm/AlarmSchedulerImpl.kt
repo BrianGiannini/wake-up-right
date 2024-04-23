@@ -1,18 +1,14 @@
 package dev.sangui.wakeupright.alarm
 
 import android.Manifest
-import android.app.AlarmManager
 import android.app.AlertDialog
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Build
 import android.provider.Settings
-import android.util.Log
 import androidx.core.content.ContextCompat
-import java.time.ZoneId
 
 class AlarmSchedulerImpl(private val context: Context) : AlarmScheduler {
 
