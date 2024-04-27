@@ -1,6 +1,8 @@
 package dev.sangui.wakeupright.ui.mainmenu
 
 
+import android.content.Intent
+import android.os.Build
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,14 +15,9 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import dev.sangui.wakeupright.MainActivity
-import dev.sangui.wakeupright.alarm.AlarmItem
-import org.koin.java.KoinJavaComponent.inject
-import java.time.LocalDateTime
 
 @Composable
 fun SetupClockScreen(viewModel: SetupClockViewModel = viewModel()) {
@@ -39,21 +36,13 @@ fun SetupClockScreen(viewModel: SetupClockViewModel = viewModel()) {
         Spacer(modifier = Modifier.height(25.dp))
         NumberPicker(range = 1..24, selectedNumber)
         Spacer(modifier = Modifier.height(25.dp))
-        Button(
-            onClick = {
-                viewModel.checkAndRequestPermission()
-            },
-        ) {
-            Text(text = "Wake me up")
-        }
 
         Button(
             onClick = {
-                // Debugging: Force a state change
-                viewModel.debugTriggerPermissionRequest()
-            }
+                viewModel.scheduleAlarm()
+            },
         ) {
-            Text("Debug: Request Permission")
+            Text(text = "Wake me up")
         }
 
     }

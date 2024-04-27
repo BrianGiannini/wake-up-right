@@ -6,16 +6,20 @@ class Event<T>(private val content: T) {
     private var hasBeenHandled = false
 
     fun getContentIfNotHandled(): T? {
+        Log.d("Event", "Event handled status: $hasBeenHandled")
 
         return if (!hasBeenHandled) {
-            Log.d("testing", "hasBeenHandled")
-
             hasBeenHandled = true
+            Log.d("Event", "Handling event with content: $content")
+
             content
         } else {
-            Log.d("testing", "HAS NOT hasBeenHandled")
+            Log.d("Event", "HAS NOT hasBeenHandled")
 
             null
         }
     }
+
+    fun peekContent(): T = content
+
 }

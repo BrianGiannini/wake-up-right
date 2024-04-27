@@ -5,5 +5,5 @@ import org.koin.dsl.module
 
 val uiModule = module {
     viewModel {
-        SetupClockViewModel(get())
+        SetupClockViewModel(get(), get())
     }}
