@@ -23,15 +23,15 @@ class AppApplication : Application() {
             )
         }
 
-        val channelId = "alarm_id"
-        val channelName = "alarm_name"
-        val notificationManager =
+        val name = "Alarm Channel"
+        val descriptionText = "Channel for Alarm Manager"
+        val importance = NotificationManager.IMPORTANCE_HIGH
+        val channel = NotificationChannel("alarm_id", name, importance).apply {
+            description = descriptionText
+        }
+        // Register the channel with the system
+        val notificationManager: NotificationManager =
             getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        val channel = NotificationChannel(
-            channelId,
-            channelName,
-            NotificationManager.IMPORTANCE_HIGH
-        )
         notificationManager.createNotificationChannel(channel)
 
     }

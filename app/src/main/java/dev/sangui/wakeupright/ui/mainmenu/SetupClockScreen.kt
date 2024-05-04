@@ -1,8 +1,6 @@
 package dev.sangui.wakeupright.ui.mainmenu
 
 
-import android.content.Intent
-import android.os.Build
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,11 +15,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import org.koin.java.KoinJavaComponent.inject
 
 @Composable
-fun SetupClockScreen(viewModel: SetupClockViewModel = viewModel()) {
-//    val setupClockViewModel: SetupClockViewModel by inject(SetupClockViewModel::class.java)
+fun SetupClockScreen() {
+    val setupClockViewModel: SetupClockViewModel by inject(SetupClockViewModel::class.java)
 
     Column(
         modifier = Modifier
@@ -39,10 +37,18 @@ fun SetupClockScreen(viewModel: SetupClockViewModel = viewModel()) {
 
         Button(
             onClick = {
-                viewModel.scheduleAlarm()
+                setupClockViewModel.scheduleAlarm()
             },
         ) {
             Text(text = "Wake me up")
+        }
+
+        Button(
+            onClick = {
+                setupClockViewModel.cancelAlarm()
+            },
+        ) {
+            Text(text = "cancel")
         }
 
     }

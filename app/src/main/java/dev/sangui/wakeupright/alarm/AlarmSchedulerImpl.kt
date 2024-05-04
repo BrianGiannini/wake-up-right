@@ -5,31 +5,39 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
 import java.time.ZoneId
+import java.util.Locale
 
 class AlarmSchedulerImpl(private val context: Context) : AlarmScheduler {
 
     private val alarmManager = context.getSystemService(AlarmManager::class.java)
 
+    fun LocalDateTime.toMillis(zoneId: ZoneId = ZoneId.systemDefault()): Long {
+        return this.atZone(zoneId).toInstant().toEpochMilli()
+    }
+
     override fun schedule(alarmItem: AlarmItem) {
-        val intent = Intent(context, AlarmReceiver::class.java).apply {
-            putExtra("EXTRA_MESSAGE", alarmItem.message)
-        }
-        val alarmTime = alarmItem.alarmTime.atZone(ZoneId.systemDefault()).toEpochSecond() * 1000L
-        alarmManager.setExactAndAllowWhileIdle(
-            AlarmManager.RTC_WAKEUP,
-            alarmTime,
-            PendingIntent.getBroadcast(
-                context,
-                alarmItem.hashCode(),
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
-            )
-        )
-        Log.e("Alarm", "Alarm set at $alarmTime")
+        val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val intent = Intent(context, AlarmReceiver::class.java, )
+        val pendingIntent = PendingIntent.getBroadcast(context,  alarmItem.hashCode(), intent, PendingIntent.FLAG_IMMUTABLE)
+        val alarmTimeInMillis = LocalDateTime.now().plusSeconds(5).toMillis()
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarmTimeInMillis, pendingIntent)
     }
 
     override fun cancel(alarmItem: AlarmItem) {
+        val alarmClockInfo = alarmManager.nextAlarmClock
+        if (alarmClockInfo != null) {
+            // Alarm is scheduled
+            val scheduledTime = alarmClockInfo.triggerTime
+            val formattedTime = SimpleDateFormat("hh:mm a", Locale.getDefault()).format(scheduledTime)
+            Log.d("alarmClockInfo", "BEFORE alarmClockInfo formattedTime : $formattedTime" )
+        } else {
+            Log.d("alarmClockInfo", "BEFORE no alarm clock" )
+            // No alarm is scheduled
+        }
+
         alarmManager.cancel(
             PendingIntent.getBroadcast(
                 context,
@@ -38,6 +46,19 @@ class AlarmSchedulerImpl(private val context: Context) : AlarmScheduler {
                 PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
             )
         )
+
+
+        if (alarmClockInfo != null) {
+            // Alarm is scheduled
+            val scheduledTime = alarmClockInfo.triggerTime
+            val formattedTime = SimpleDateFormat("hh:mm a", Locale.getDefault()).format(scheduledTime)
+            Log.d("alarmClockInfo", "AFTER alarmClockInfo formattedTime : $formattedTime" )
+        } else {
+            Log.d("alarmClockInfo", "AFTER no alarm clock" )
+            // No alarm is scheduled
+        }
+
+
     }
 
 }

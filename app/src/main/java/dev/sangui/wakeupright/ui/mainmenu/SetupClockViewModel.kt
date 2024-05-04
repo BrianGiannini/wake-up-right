@@ -1,33 +1,35 @@
 package dev.sangui.wakeupright.ui.mainmenu
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import dev.sangui.wakeupright.alarm.AlarmItem
 import dev.sangui.wakeupright.alarm.AlarmScheduler
-import dev.sangui.wakeupright.utils.Event
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import java.time.LocalDateTime
 
 class SetupClockViewModel(
     application: Application,
     private val alarmScheduler: AlarmScheduler,
 ) : AndroidViewModel(application) {
-    private val _permissionRequest = MutableStateFlow<Event<String>?>(null)
-    val permissionRequest: StateFlow<Event<String>?> = _permissionRequest.asStateFlow()
 
-    var alarmItem: AlarmItem? = null
+    private var alarmItem: AlarmItem? = null
 
     fun scheduleAlarm() {
+        val time = LocalDateTime.now().plusSeconds(2.toLong())
+        Log.d("Alarm", "alarm" + "year" + time.year + "dayOfYear" + time.dayOfYear + "month" + time.month + "hour" + time.hour + "minute" + time.minute + "second" + time.second)
         alarmItem = AlarmItem(
-            alarmTime = LocalDateTime.now().plusSeconds(
-                2.toLong()
-            ),
+            alarmTime = LocalDateTime.now().plusSeconds(10.toLong()),
             message = "messageText"
         )
         alarmItem?.let(alarmScheduler::schedule)
+   }
 
+    fun cancelAlarm() {
+        alarmItem = AlarmItem(
+            alarmTime = LocalDateTime.now().plusSeconds(10.toLong()),
+            message = "messageText"
+        )
+        alarmItem?.let(alarmScheduler::cancel)
     }
 
 
