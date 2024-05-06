@@ -16,20 +16,23 @@ class SetupClockViewModel(
 
     fun scheduleAlarm() {
         val time = LocalDateTime.now().plusSeconds(2.toLong())
-        Log.d("Alarm", "alarm" + "year" + time.year + "dayOfYear" + time.dayOfYear + "month" + time.month + "hour" + time.hour + "minute" + time.minute + "second" + time.second)
+        Log.d(
+            "Alarm",
+            "alarm" + "year" + time.year + "dayOfYear" + time.dayOfYear + "month" + time.month + "hour" + time.hour + "minute" + time.minute + "second" + time.second
+        )
         alarmItem = AlarmItem(
             alarmTime = LocalDateTime.now().plusSeconds(10.toLong()),
             message = "messageText"
         )
         alarmItem?.let(alarmScheduler::schedule)
-   }
+    }
 
     fun cancelAlarm() {
         alarmItem = AlarmItem(
             alarmTime = LocalDateTime.now().plusSeconds(10.toLong()),
             message = "messageText"
         )
-        alarmItem?.let(alarmScheduler::cancel)
+        alarmScheduler.cancel(alarmItem.hashCode())
     }
 
 
