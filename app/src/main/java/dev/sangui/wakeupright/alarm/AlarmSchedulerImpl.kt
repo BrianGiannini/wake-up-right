@@ -21,6 +21,7 @@ class AlarmSchedulerImpl(private val context: Context) : AlarmScheduler {
     override fun schedule(alarmItem: AlarmItem) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, AlarmReceiver::class.java, )
+        intent.putExtra("EXTRA_MESSAGE", "wake up Neo")
         val pendingIntent = PendingIntent.getBroadcast(context,  alarmItem.hashCode(), intent, PendingIntent.FLAG_IMMUTABLE)
         val alarmTimeInMillis = LocalDateTime.now().plusSeconds(5).toMillis()
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, alarmTimeInMillis, pendingIntent)
@@ -57,7 +58,6 @@ class AlarmSchedulerImpl(private val context: Context) : AlarmScheduler {
             Log.d("alarmClockInfo", "AFTER no alarm clock" )
             // No alarm is scheduled
         }
-
 
     }
 
