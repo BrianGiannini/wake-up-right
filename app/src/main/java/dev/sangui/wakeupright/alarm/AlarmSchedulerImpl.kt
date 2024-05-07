@@ -4,17 +4,12 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.util.Log
-import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.util.Locale
 
 class AlarmSchedulerImpl(private val context: Context) : AlarmScheduler {
 
-    private val alarmManager = context.getSystemService(AlarmManager::class.java)
-
-    fun LocalDateTime.toMillis(zoneId: ZoneId = ZoneId.systemDefault()): Long {
+    private fun LocalDateTime.toMillis(zoneId: ZoneId = ZoneId.systemDefault()): Long {
         return this.atZone(zoneId).toInstant().toEpochMilli()
     }
 
@@ -22,6 +17,7 @@ class AlarmSchedulerImpl(private val context: Context) : AlarmScheduler {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, AlarmReceiver::class.java)
         intent.putExtra("EXTRA_MESSAGE", "wake up Neo")
+
         val pendingIntent = PendingIntent.getBroadcast(
             context,
             alarmItem.hashCode(),
@@ -38,8 +34,8 @@ class AlarmSchedulerImpl(private val context: Context) : AlarmScheduler {
 
     override fun cancel(requestCode: Int) {
         val intent = Intent(context, AlarmReceiver::class.java)
-        val pendingIntent =
-            PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_IMMUTABLE)
+        val pendingIntent = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_IMMUTABLE)
+
         if (pendingIntent != null) {
             val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
             alarmManager.cancel(pendingIntent)

@@ -8,19 +8,13 @@ import android.content.Intent
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
-import android.util.Log
 import androidx.core.app.NotificationCompat
 import dev.sangui.wakeupright.R
 
 class AlarmReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        Log.d("AlarmReceiver", "Received alarm broadcast")
-
         val message = intent?.getStringExtra("EXTRA_MESSAGE") ?: return
-
-        Log.d("AlarmReceiver", "get message $message")
-
         val channelId = "alarm_id"
         val notificationId = System.currentTimeMillis().toInt()  // Use current time as unique ID
 
@@ -45,8 +39,6 @@ class AlarmReceiver : BroadcastReceiver() {
                 .setContentTitle("Alarm Demo")
                 .setContentText("Notification sent with message: $message")
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-
-            Log.d("AlarmReceiver", "notification process?")
 
             notificationManager.notify(notificationId, builder.build())
         }

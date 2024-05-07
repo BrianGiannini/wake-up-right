@@ -28,11 +28,9 @@ class SetupClockViewModel(
     }
 
     fun cancelAlarm() {
-        alarmItem = AlarmItem(
-            alarmTime = LocalDateTime.now().plusSeconds(10.toLong()),
-            message = "messageText"
-        )
-        alarmScheduler.cancel(alarmItem.hashCode())
+        alarmItem?.let {
+            alarmScheduler.cancel(it.hashCode())
+        }
     }
 
 
