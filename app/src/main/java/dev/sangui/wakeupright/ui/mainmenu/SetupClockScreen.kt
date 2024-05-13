@@ -1,6 +1,5 @@
 package dev.sangui.wakeupright.ui.mainmenu
 
-
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,8 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,11 +25,12 @@ fun SetupClockScreen() {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
 
-        val selectedNumber = remember { mutableIntStateOf(0) }
-
-        Text("Selected Number: ${selectedNumber.intValue}")
+        Text("Hour")
         Spacer(modifier = Modifier.height(25.dp))
-        NumberPicker(range = 1..24, selectedNumber)
+        NumberPicker(numbers = 24)
+        Spacer(modifier = Modifier.height(25.dp))
+        Text("Minutes")
+        NumberPicker(numbers = 60)
         Spacer(modifier = Modifier.height(25.dp))
 
         Button(
@@ -50,7 +48,6 @@ fun SetupClockScreen() {
         ) {
             Text(text = "cancel")
         }
-
     }
 
 }
