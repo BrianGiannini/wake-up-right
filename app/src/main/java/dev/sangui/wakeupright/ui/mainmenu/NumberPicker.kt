@@ -1,8 +1,8 @@
 package dev.sangui.wakeupright.ui.mainmenu
 
+import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
@@ -16,8 +16,9 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,12 +26,18 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.launch
+import dev.sangui.wakeupright.alarm.DataStoreManager
+import kotlinx.coroutines.flow.first
 import kotlin.math.absoluteValue
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun NumberPicker(modifier: Modifier = Modifier, numbers: Int) {
+fun NumberPicker(
+    modifier: Modifier = Modifier,
+    dataStoreManager: DataStoreManager,
+    numbers: Int,
+    id: String,
+) {
     BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
         val contentPadding = (maxWidth - 50.dp) / 2
         val offSet = maxWidth / 5
@@ -39,10 +46,18 @@ fun NumberPicker(modifier: Modifier = Modifier, numbers: Int) {
             numbers
         })
 
-        val scope = rememberCoroutineScope()
+        // Load the saved selected number when the composable is initialized
+        LaunchedEffect(id) {
+            val savedNumber = dataStoreManager.selectedNumberFlow(id).first()
+            pagerState.scrollToPage(savedNumber)
+        }
 
-        val mutableInteractionSource = remember {
-            MutableInteractionSource()
+        // Save the selected number whenever the current page changes
+        LaunchedEffect(pagerState) {
+            snapshotFlow { pagerState.currentPage }.collect { page ->
+                Log.d("NumberPicker", "saveSelectedNumber: $id, $page")
+                dataStoreManager.saveSelectedNumber(id, page)
+            }
         }
 
         CenterCircle(
@@ -58,7 +73,7 @@ fun NumberPicker(modifier: Modifier = Modifier, numbers: Int) {
             state = pagerState,
             flingBehavior = PagerDefaults.flingBehavior(
                 state = pagerState,
-                pagerSnapDistance = PagerSnapDistance.atMost(0)
+                pagerSnapDistance = PagerSnapDistance.atMost(5) // 5 for the snapping scrolling effect
             ),
             contentPadding = PaddingValues(horizontal = contentPadding),
             pageSpacing = itemSpacing,
@@ -75,15 +90,6 @@ fun NumberPicker(modifier: Modifier = Modifier, numbers: Int) {
 
                         alpha = opacity
                         clip = true
-                    }
-                    .clickable(
-                        interactionSource = mutableInteractionSource,
-                        indication = null,
-                        enabled = true,
-                    ) {
-                        scope.launch {
-                            pagerState.animateScrollToPage(page)
-                        }
                     }) {
                 Text(
                     text = "$page",

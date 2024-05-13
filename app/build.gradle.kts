@@ -51,6 +51,7 @@ android {
 
 dependencies {
     implementation(libs.bundles.koinAndroidX)
+    implementation(libs.datastore.preferences)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
