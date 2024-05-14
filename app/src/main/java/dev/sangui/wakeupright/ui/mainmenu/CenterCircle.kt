@@ -19,7 +19,7 @@ fun CenterCircle(
 ) {
     Canvas(
         modifier = modifier
-            .size(200.dp)
+            .size(175.dp)
     ) {
 
         drawArc(

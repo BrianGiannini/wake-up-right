@@ -1,6 +1,5 @@
 package dev.sangui.wakeupright.ui.mainmenu
 
-import android.content.Context
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,15 +10,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import dev.sangui.wakeupright.alarm.DataStoreManager
-import org.koin.java.KoinJavaComponent.inject
+
 
 @Composable
-fun SetupClockScreen() {
-    val setupClockViewModel: SetupClockViewModel by inject(SetupClockViewModel::class.java)
-    val dataStoreManager: DataStoreManager by inject(DataStoreManager::class.java)
-
+fun SetupClockScreen(setupClockViewModel: SetupClockViewModel, dataStoreManager: DataStoreManager) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -27,12 +26,12 @@ fun SetupClockScreen() {
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
 
-        Text("Hour")
+        Text("Hour", style = TextStyle(fontSize = 28.sp))
         Spacer(modifier = Modifier.height(25.dp))
-        NumberPicker(dataStoreManager = dataStoreManager, numbers = 24, id = "hours")
+        NumberPicker(dataStoreManager = dataStoreManager, id = "hours", maxNumbers = 24)
         Spacer(modifier = Modifier.height(25.dp))
-        Text("Minutes")
-        NumberPicker(dataStoreManager = dataStoreManager, numbers = 60, id = "minutes")
+        Text("Minutes", style = TextStyle(fontSize = 28.sp))
+        NumberPicker(dataStoreManager = dataStoreManager, id = "minutes", maxNumbers = 60, incrementNumber = 5)
         Spacer(modifier = Modifier.height(25.dp))
 
         Button(
