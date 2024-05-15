@@ -6,4 +6,5 @@ import org.koin.dsl.module
 val alarmModule = module {
     single<AlarmScheduler> { AlarmSchedulerImpl(androidContext()) }
     single<DataStoreManager> { DataStoreManager(androidContext()) }
+    single<AlarmReceiver> { AlarmReceiver() }
 }

@@ -4,6 +4,7 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import java.time.LocalDateTime
 import java.time.ZoneId
 
@@ -14,6 +15,7 @@ class AlarmSchedulerImpl(private val context: Context) : AlarmScheduler {
     }
 
     override fun schedule(alarmItem: AlarmItem) {
+        Log.d("AlarmScheduler", "Scheduling alarm for ${alarmItem.alarmTime}")
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, AlarmReceiver::class.java)
         intent.putExtra("EXTRA_MESSAGE", alarmItem.message)

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -21,6 +22,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import dev.sangui.wakeupright.alarm.DataStoreManager
+import kotlinx.coroutines.flow.collectLatest
 import java.time.format.DateTimeFormatter
 
 
@@ -35,6 +37,12 @@ fun SetupClockScreen(setupClockViewModel: SetupClockViewModel, dataStoreManager:
         var selectedHour by remember { mutableIntStateOf(0) }
         var selectedMinute by remember { mutableIntStateOf(0) }
         var scheduledTime by remember { mutableStateOf<String?>(null) }
+
+        LaunchedEffect(setupClockViewModel) {
+            setupClockViewModel.scheduledDate.collectLatest { date ->
+                scheduledTime = date?.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
+            }
+        }
 
         Text("Hour", style = TextStyle(fontSize = 36.sp))
         Spacer(modifier = Modifier.height(25.dp))
@@ -61,9 +69,6 @@ fun SetupClockScreen(setupClockViewModel: SetupClockViewModel, dataStoreManager:
                 .width(200.dp),
             onClick = {
                 setupClockViewModel.scheduleAlarm(selectedHour, selectedMinute)
-                val scheduledDateTime = setupClockViewModel.getScheduledDate()
-                scheduledTime =
-                    scheduledDateTime?.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"))
             },
         ) {
             Text(
@@ -78,10 +83,8 @@ fun SetupClockScreen(setupClockViewModel: SetupClockViewModel, dataStoreManager:
             modifier = Modifier
                 .height(150.dp)
                 .width(200.dp),
-
             onClick = {
                 setupClockViewModel.cancelAlarm()
-                scheduledTime = null
             },
         ) {
             Text(
@@ -91,7 +94,6 @@ fun SetupClockScreen(setupClockViewModel: SetupClockViewModel, dataStoreManager:
         }
 
         if (scheduledTime != null) {
-            Spacer(modifier = Modifier.height(25.dp))
             Text(
                 text = "Alarm scheduled at $scheduledTime",
                 style = TextStyle(fontSize = 18.sp),

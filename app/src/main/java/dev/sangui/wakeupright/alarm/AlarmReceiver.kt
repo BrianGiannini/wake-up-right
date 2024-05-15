@@ -2,18 +2,24 @@ package dev.sangui.wakeupright.alarm
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.os.Build
-import android.os.VibrationEffect
-import android.os.Vibrator
 import androidx.core.app.NotificationCompat
 import dev.sangui.wakeupright.R
+import dev.sangui.wakeupright.ui.mainmenu.SetupClockViewModel
+import org.koin.java.KoinJavaComponent.inject
 
 class AlarmReceiver : BroadcastReceiver() {
+    private val setupClockViewModel: SetupClockViewModel by inject(SetupClockViewModel::class.java)
 
     override fun onReceive(context: Context?, intent: Intent?) {
+        if (intent?.action == "CANCEL_VIBRATION") {
+            setupClockViewModel.stopVibration()
+            return
+        }
+
         val message = intent?.getStringExtra("EXTRA_MESSAGE") ?: return
         val channelId = "alarm_id"
         val notificationId = System.currentTimeMillis().toInt()  // Use current time as unique ID
@@ -22,7 +28,7 @@ class AlarmReceiver : BroadcastReceiver() {
             val notificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
             // Make phone vibrate
-            vibrate(context)
+            setupClockViewModel.startVibration()
 
             // Create the NotificationChannel, but only on API 26+ because
             val name = "Wake up notification"
@@ -34,36 +40,23 @@ class AlarmReceiver : BroadcastReceiver() {
             }
             notificationManager.createNotificationChannel(channel)
 
+            // Intent to cancel vibration
+            val cancelIntent = Intent(ctx, AlarmReceiver::class.java).apply {
+                action = "CANCEL_VIBRATION"
+            }
+            val cancelPendingIntent = PendingIntent.getBroadcast(ctx, 0, cancelIntent, PendingIntent.FLAG_IMMUTABLE)
+
             val builder = NotificationCompat.Builder(ctx, channelId)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
-                .setContentTitle("Alarm Demo")
-                .setContentText("Notification sent with message: $message")
+                .setContentTitle("Alarm")
+                .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setAutoCancel(true)  // Ensure the notification can be dismissed
+                .addAction(R.drawable.ic_launcher_foreground, "Stop", cancelPendingIntent)  // Add action to stop vibration
 
             notificationManager.notify(notificationId, builder.build())
         }
+
     }
 
-    private fun vibrate(context: Context) {
-        // Vibration code starts here
-        val vibrator =  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            val vibratorManager = context.getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? android.os.VibratorManager
-            vibratorManager?.defaultVibrator
-        } else {
-            context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
-        }
-
-        if (vibrator?.hasVibrator() == true) {  // Check if the hardware has a vibrator
-            val pattern = longArrayOf(200, 700, 600)
-            val amplitude = intArrayOf(0, 255,0 )
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                // New API
-                vibrator.vibrate(VibrationEffect.createWaveform(pattern, amplitude, 1))
-            } else {
-                // Deprecated in API 26
-                vibrator.vibrate(pattern, 0)
-            }
-        }
-    }
 }
