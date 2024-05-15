@@ -13,25 +13,27 @@ class SetupClockViewModel(
 ) : AndroidViewModel(application) {
 
     private var alarmItem: AlarmItem? = null
+    private var _scheduledDate: LocalDateTime? = null
 
-    fun scheduleAlarm() {
-        val time = LocalDateTime.now().plusSeconds(2.toLong())
-        Log.d(
-            "Alarm",
-            "alarm" + "year" + time.year + "dayOfYear" + time.dayOfYear + "month" + time.month + "hour" + time.hour + "minute" + time.minute + "second" + time.second
-        )
+    fun scheduleAlarm(hours: Int, minutes: Int) {
+        val time = LocalDateTime.now().plusHours(hours.toLong()).plusMinutes(minutes.toLong())
         alarmItem = AlarmItem(
-            alarmTime = LocalDateTime.now().plusSeconds(10.toLong()),
-            message = "messageText"
+            alarmTime = time,
+            message = "Wake up!"
         )
         alarmItem?.let(alarmScheduler::schedule)
+        _scheduledDate = time
     }
 
     fun cancelAlarm() {
         alarmItem?.let {
             alarmScheduler.cancel(it.hashCode())
         }
+        _scheduledDate = null
     }
 
+    fun getScheduledDate(): LocalDateTime? {
+        return _scheduledDate
+    }
 
 }

@@ -37,11 +37,11 @@ import kotlin.math.absoluteValue
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun NumberPicker(
-    modifier: Modifier = Modifier,
     dataStoreManager: DataStoreManager,
     id: String,
     maxNumbers: Int,
     incrementNumber: Int = 1,
+    onValueChange: (Int) -> Unit,
 ) {
     BoxWithConstraints(modifier = Modifier.fillMaxWidth().padding(10.dp),) {
         val contentPadding = (maxWidth - 100.dp) / 2
@@ -63,6 +63,7 @@ fun NumberPicker(
             snapshotFlow { pagerState.currentPage }.collect { page ->
                 Log.d("NumberPicker", "saveSelectedNumber: $id, $page")
                 dataStoreManager.saveSelectedNumber(id, page * incrementNumber)
+                onValueChange(page * incrementNumber)
             }
         }
 
@@ -117,5 +118,6 @@ fun NumberPickerPreview() {
         id = "id",
         maxNumbers = 100,
         incrementNumber = 10,
+        onValueChange = {},
     )
 }

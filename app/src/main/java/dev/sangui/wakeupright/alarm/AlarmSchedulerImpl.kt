@@ -16,7 +16,7 @@ class AlarmSchedulerImpl(private val context: Context) : AlarmScheduler {
     override fun schedule(alarmItem: AlarmItem) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, AlarmReceiver::class.java)
-        intent.putExtra("EXTRA_MESSAGE", "wake up Neo")
+        intent.putExtra("EXTRA_MESSAGE", alarmItem.message)
 
         val pendingIntent = PendingIntent.getBroadcast(
             context,
@@ -24,10 +24,9 @@ class AlarmSchedulerImpl(private val context: Context) : AlarmScheduler {
             intent,
             PendingIntent.FLAG_IMMUTABLE
         )
-        val alarmTimeInMillis = LocalDateTime.now().plusSeconds(5).toMillis()
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
-            alarmTimeInMillis,
+            alarmItem.alarmTime.toMillis(),
             pendingIntent
         )
     }
