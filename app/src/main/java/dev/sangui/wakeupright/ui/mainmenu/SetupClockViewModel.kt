@@ -1,18 +1,29 @@
 package dev.sangui.wakeupright.ui.mainmenu
 
 import android.app.Application
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
+import android.media.AudioAttributes
+import android.media.AudioManager
+import android.media.Ringtone
+import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.Log
 import android.widget.Toast
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.AndroidViewModel
 import dev.sangui.wakeupright.alarm.AlarmItem
+import dev.sangui.wakeupright.alarm.AlarmReceiver
 import dev.sangui.wakeupright.alarm.AlarmScheduler
+import dev.sangui.wakeupright.alarm.RingToneProvider
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import org.koin.java.KoinJavaComponent
 import java.time.LocalDateTime
 
 class SetupClockViewModel(
@@ -23,17 +34,7 @@ class SetupClockViewModel(
     private var alarmItem: AlarmItem? = null
     private val _scheduledDate = MutableStateFlow<LocalDateTime?>(null)
     val scheduledDate: StateFlow<LocalDateTime?> get() = _scheduledDate.asStateFlow()
-
-    private var vibrator: Vibrator? = null
-
-    init {
-        vibrator = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            val vibratorManager = getApplication<Application>().getSystemService(Context.VIBRATOR_MANAGER_SERVICE) as? android.os.VibratorManager
-            vibratorManager?.defaultVibrator
-        } else {
-            getApplication<Application>().getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator
-        }
-    }
+    private val ringToneProvider: RingToneProvider by KoinJavaComponent.inject(RingToneProvider::class.java)
 
     fun scheduleAlarm(hours: Int, minutes: Int) {
         val time = LocalDateTime.now().plusHours(hours.toLong()).plusMinutes(minutes.toLong())
@@ -50,37 +51,23 @@ class SetupClockViewModel(
         }
     }
 
-    fun cancelAlarm() {
-        stopVibration()
+    fun cancelAlarm(context: Context) {
         try {
             alarmItem?.let {
                 alarmScheduler.cancel(it.hashCode())
             }
             _scheduledDate.value = null
+
+            // Intent to cancel vibration
+            val cancelIntent = Intent(context, AlarmReceiver::class.java).apply {
+                action = "CANCEL_RINGTONE"
+            }
+            val cancelPendingIntent = PendingIntent.getBroadcast(context, 0, cancelIntent, PendingIntent.FLAG_IMMUTABLE)
+
+            cancelPendingIntent.send()
         } catch (e: Exception) {
             Log.e("SetupClockViewModel", "Error cancelling alarm", e)
         }
-    }
-
-    fun startVibration() {
-        vibrator?.let { v ->
-            if (v.hasVibrator()) {  // Check if the hardware has a vibrator
-                val pattern = longArrayOf(200, 700, 600)
-                val amplitude = intArrayOf(0, 255, 0)
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    // New API
-                    v.vibrate(VibrationEffect.createWaveform(pattern, amplitude, 1))
-                } else {
-                    // Deprecated in API 26
-                    v.vibrate(pattern, 0)
-                }
-            }
-        }
-    }
-
-    fun stopVibration() {
-        vibrator?.cancel()
     }
 
     fun showToast(context: Context, message: String) {

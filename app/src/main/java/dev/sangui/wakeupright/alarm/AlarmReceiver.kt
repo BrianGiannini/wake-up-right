@@ -6,29 +6,34 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import dev.sangui.wakeupright.R
-import dev.sangui.wakeupright.ui.mainmenu.SetupClockViewModel
 import org.koin.java.KoinJavaComponent.inject
 
 class AlarmReceiver : BroadcastReceiver() {
-    private val setupClockViewModel: SetupClockViewModel by inject(SetupClockViewModel::class.java)
+
+    private val ringToneProvider: RingToneProvider by inject(RingToneProvider::class.java)
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        if (intent?.action == "CANCEL_VIBRATION") {
-            setupClockViewModel.stopVibration()
+        Log.d("AlarmReceiver", "Received alarm")
+
+        if (intent?.action == "CANCEL_RINGTONE") {
+            Log.d("AlarmReceiver", "cancel alarm")
+            ringToneProvider.stopRingtone()
             return
+        }
+
+        context?.let {
+            ringToneProvider.playRingtone(it)
         }
 
         val message = intent?.getStringExtra("EXTRA_MESSAGE") ?: return
         val channelId = "alarm_id"
         val notificationId = System.currentTimeMillis().toInt()  // Use current time as unique ID
 
-        context?.let { ctx ->
-            val notificationManager = ctx.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-            // Make phone vibrate
-            setupClockViewModel.startVibration()
+        context.let { ctx ->
+            val notificationManager = ctx?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
             // Create the NotificationChannel, but only on API 26+ because
             val name = "Wake up notification"
@@ -42,7 +47,7 @@ class AlarmReceiver : BroadcastReceiver() {
 
             // Intent to cancel vibration
             val cancelIntent = Intent(ctx, AlarmReceiver::class.java).apply {
-                action = "CANCEL_VIBRATION"
+                action = "CANCEL_RINGTONE"
             }
             val cancelPendingIntent = PendingIntent.getBroadcast(ctx, 0, cancelIntent, PendingIntent.FLAG_IMMUTABLE)
 

@@ -28,7 +28,8 @@ class AlarmSchedulerImpl(private val context: Context) : AlarmScheduler {
         )
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
-            alarmItem.alarmTime.toMillis(),
+//            alarmItem.alarmTime.toMillis(),
+            LocalDateTime.now().plusSeconds(5).toMillis(),
             pendingIntent
         )
     }

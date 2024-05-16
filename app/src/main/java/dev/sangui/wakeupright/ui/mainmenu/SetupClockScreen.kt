@@ -115,7 +115,7 @@ fun SetupClockScreen(setupClockViewModel: SetupClockViewModel, dataStoreManager:
                         .weight(1f)
                         .padding(vertical = 8.dp),
                     onClick = {
-                        setupClockViewModel.cancelAlarm()
+                        setupClockViewModel.cancelAlarm(context)
                         setupClockViewModel.showToast(context, "Alarm Cancelled")
                     },
                 ) {

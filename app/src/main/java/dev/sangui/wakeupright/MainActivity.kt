@@ -14,7 +14,6 @@ import dev.sangui.wakeupright.ui.theme.WakeUpRightTheme
 import org.koin.java.KoinJavaComponent.inject
 
 class MainActivity : ComponentActivity() {
-
     private val setupClockViewModel: SetupClockViewModel by inject(SetupClockViewModel::class.java)
     private val dataStoreManager: DataStoreManager by inject(DataStoreManager::class.java)
 

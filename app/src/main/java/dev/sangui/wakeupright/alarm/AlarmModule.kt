@@ -7,4 +7,5 @@ val alarmModule = module {
     single<AlarmScheduler> { AlarmSchedulerImpl(androidContext()) }
     single<DataStoreManager> { DataStoreManager(androidContext()) }
     single<AlarmReceiver> { AlarmReceiver() }
+    single<RingToneProvider> { RingToneProvider() }
 }
