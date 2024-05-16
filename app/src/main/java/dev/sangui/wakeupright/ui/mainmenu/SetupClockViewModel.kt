@@ -6,6 +6,7 @@ import android.os.Build
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import dev.sangui.wakeupright.alarm.AlarmItem
 import dev.sangui.wakeupright.alarm.AlarmScheduler
@@ -80,5 +81,9 @@ class SetupClockViewModel(
 
     fun stopVibration() {
         vibrator?.cancel()
+    }
+
+    fun showToast(context: Context, message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 }

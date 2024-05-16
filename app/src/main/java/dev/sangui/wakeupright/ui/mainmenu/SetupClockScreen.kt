@@ -1,5 +1,6 @@
 package dev.sangui.wakeupright.ui.mainmenu
 
+import android.widget.Toast
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -33,13 +35,18 @@ import java.util.Locale
 
 @Composable
 fun SetupClockScreen(setupClockViewModel: SetupClockViewModel, dataStoreManager: DataStoreManager) {
+    val context = LocalContext.current
+    var selectedHour by remember { mutableIntStateOf(0) }
+    var selectedMinute by remember { mutableIntStateOf(0) }
+    var scheduledTime by remember { mutableStateOf<String?>(null) }
+    val scrollState = rememberScrollState()
+
     Box(
         modifier = Modifier
             .fillMaxSize()
             .padding(all = 20.dp),
         contentAlignment = Alignment.Center
     ) {
-        val scrollState = rememberScrollState()
 
         Column(
             modifier = Modifier
@@ -47,10 +54,6 @@ fun SetupClockScreen(setupClockViewModel: SetupClockViewModel, dataStoreManager:
                 .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            var selectedHour by remember { mutableIntStateOf(0) }
-            var selectedMinute by remember { mutableIntStateOf(0) }
-            var scheduledTime by remember { mutableStateOf<String?>(null) }
-
             LaunchedEffect(setupClockViewModel) {
                 setupClockViewModel.scheduledDate.collectLatest { date ->
                     scheduledTime = date?.format(DateTimeFormatter.ofPattern("EEEE HH:mm", Locale.getDefault()))
@@ -85,17 +88,18 @@ fun SetupClockScreen(setupClockViewModel: SetupClockViewModel, dataStoreManager:
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1f), // Ajouter ceci pour que la colonne prenne l'espace restant
+                    .weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center // To distribute buttons evenly
+                verticalArrangement = Arrangement.Center
             ) {
                 Button(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(1f) // Ajouter ceci pour que le bouton prenne l'espace restant verticalement
+                        .weight(1f)
                         .padding(vertical = 8.dp),
                     onClick = {
                         setupClockViewModel.scheduleAlarm(selectedHour, selectedMinute)
+                        setupClockViewModel.showToast(context, "Alarm Scheduled")
                     },
                 ) {
                     Text(
@@ -108,10 +112,11 @@ fun SetupClockScreen(setupClockViewModel: SetupClockViewModel, dataStoreManager:
                 Button(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(1f) // Ajouter ceci pour que le bouton prenne l'espace restant verticalement
+                        .weight(1f)
                         .padding(vertical = 8.dp),
                     onClick = {
                         setupClockViewModel.cancelAlarm()
+                        setupClockViewModel.showToast(context, "Alarm Cancelled")
                     },
                 ) {
                     Text(
