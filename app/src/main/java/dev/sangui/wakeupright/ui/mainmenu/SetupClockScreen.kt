@@ -1,6 +1,12 @@
 package dev.sangui.wakeupright.ui.mainmenu
 
+import android.Manifest.permission.POST_NOTIFICATIONS
+import android.content.pm.PackageManager
+import android.os.Build
 import android.widget.Toast
+import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -27,6 +33,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
 import dev.sangui.wakeupright.alarm.DataStoreManager
 import kotlinx.coroutines.flow.collectLatest
 import java.time.format.DateTimeFormatter
@@ -40,6 +47,26 @@ fun SetupClockScreen(setupClockViewModel: SetupClockViewModel, dataStoreManager:
     var selectedMinute by remember { mutableIntStateOf(0) }
     var scheduledTime by remember { mutableStateOf<String?>(null) }
     val scrollState = rememberScrollState()
+    var notificationPermissionGranted by remember { mutableStateOf(false) }
+
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        notificationPermissionGranted = isGranted
+        if (isGranted) {
+            Toast.makeText(context, "Notification permission granted", Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(context, "Notification permission denied, please enable it in the app settings", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        notificationPermissionGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            ContextCompat.checkSelfPermission(context, POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+        } else {
+            true
+        }
+    }
 
     Box(
         modifier = Modifier
@@ -65,7 +92,7 @@ fun SetupClockScreen(setupClockViewModel: SetupClockViewModel, dataStoreManager:
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Hour", style = TextStyle(fontSize = 36.sp))
+                Text("Hours", style = TextStyle(fontSize = 36.sp))
                 NumberPicker(
                     dataStoreManager = dataStoreManager,
                     id = "hours",
@@ -98,8 +125,16 @@ fun SetupClockScreen(setupClockViewModel: SetupClockViewModel, dataStoreManager:
                         .weight(1f)
                         .padding(vertical = 8.dp),
                     onClick = {
-                        setupClockViewModel.scheduleAlarm(selectedHour, selectedMinute)
-                        setupClockViewModel.showToast(context, "Alarm Scheduled")
+                        if (notificationPermissionGranted) {
+                            setupClockViewModel.scheduleAlarm(selectedHour, selectedMinute)
+                            setupClockViewModel.showToast(context, "Alarm Scheduled")
+                        } else {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                launcher.launch(POST_NOTIFICATIONS)
+                            } else {
+                                setupClockViewModel.showToast(context, "Notification permission is required to schedule the alarm")
+                            }
+                        }
                     },
                 ) {
                     Text(
