@@ -4,11 +4,8 @@ import android.app.Application
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.os.Build
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.AndroidViewModel
 import dev.sangui.wakeupright.alarm.AlarmItem
 import dev.sangui.wakeupright.alarm.AlarmReceiver

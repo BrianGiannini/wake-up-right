@@ -8,6 +8,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.core.app.NotificationCompat
+import dev.sangui.wakeupright.MainActivity
 import dev.sangui.wakeupright.R
 import org.koin.java.KoinJavaComponent.inject
 
@@ -21,6 +22,13 @@ class AlarmReceiver : BroadcastReceiver() {
         if (intent?.action == "CANCEL_RINGTONE") {
             Log.d("AlarmReceiver", "cancel alarm")
             ringToneProvider.stopRingtone()
+
+            val notificationId = intent.getIntExtra("NOTIFICATION_ID", -1)
+            if (notificationId != -1) {
+                val notificationManager = context?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+                notificationManager.cancel(notificationId)
+            }
+
             return
         }
 
@@ -45,19 +53,34 @@ class AlarmReceiver : BroadcastReceiver() {
             }
             notificationManager.createNotificationChannel(channel)
 
-            // Intent to cancel vibration
+            // Intent to cancel ringtone
             val cancelIntent = Intent(ctx, AlarmReceiver::class.java).apply {
                 action = "CANCEL_RINGTONE"
+                putExtra("NOTIFICATION_ID", notificationId)
             }
             val cancelPendingIntent = PendingIntent.getBroadcast(ctx, 0, cancelIntent, PendingIntent.FLAG_IMMUTABLE)
+
+            // intent to erase notification when swipe
+            val deleteIntent = Intent(ctx, AlarmReceiver::class.java).apply {
+                action = "CANCEL_RINGTONE"
+            }
+            val deletePendingIntent = PendingIntent.getBroadcast(ctx, 1, deleteIntent, PendingIntent.FLAG_IMMUTABLE)
+
+            // Intent to open the app
+            val openAppIntent = Intent(ctx, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            }
+            val openAppPendingIntent = PendingIntent.getActivity(ctx, 0, openAppIntent, PendingIntent.FLAG_IMMUTABLE)
 
             val builder = NotificationCompat.Builder(ctx, channelId)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setContentTitle("Alarm")
                 .setContentText(message)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setAutoCancel(true)  // Ensure the notification can be dismissed
-                .addAction(R.drawable.ic_launcher_foreground, "Stop", cancelPendingIntent)  // Add action to stop vibration
+                .setAutoCancel(true)
+                .setContentIntent(openAppPendingIntent)
+                .setDeleteIntent(deletePendingIntent)
+                .addAction(R.drawable.ic_launcher_foreground, "Stop", cancelPendingIntent)
 
             notificationManager.notify(notificationId, builder.build())
         }
