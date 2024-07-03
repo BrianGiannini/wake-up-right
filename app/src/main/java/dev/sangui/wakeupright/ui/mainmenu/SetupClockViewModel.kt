@@ -4,13 +4,10 @@ import android.app.Application
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.database.Cursor
-import android.media.RingtoneManager
-import android.net.Uri
 import android.util.Log
 import android.widget.Toast
-import androidx.core.app.ActivityCompat.startActivityForResult
 import androidx.lifecycle.AndroidViewModel
+import dev.sangui.wakeupright.alarm.AlarmConfig
 import dev.sangui.wakeupright.alarm.AlarmItem
 import dev.sangui.wakeupright.alarm.AlarmReceiver
 import dev.sangui.wakeupright.alarm.AlarmScheduler
@@ -23,12 +20,15 @@ import java.time.LocalDateTime
 class SetupClockViewModel(
     application: Application,
     private val alarmScheduler: AlarmScheduler,
+    private val alarmConfig: AlarmConfig
 ) : AndroidViewModel(application) {
 
 
     private var alarmItem: AlarmItem? = null
     private val _scheduledDate = MutableStateFlow<LocalDateTime?>(null)
     val scheduledDate: StateFlow<LocalDateTime?> get() = _scheduledDate.asStateFlow()
+
+    private var notificationId: Int? = null
 
     fun scheduleAlarm(hours: Int, minutes: Int) {
         val time = LocalDateTime.now().plusHours(hours.toLong()).plusMinutes(minutes.toLong())
@@ -39,6 +39,9 @@ class SetupClockViewModel(
         try {
             alarmItem?.let(alarmScheduler::schedule)
             _scheduledDate.value = time
+
+            // Store the notification ID
+            notificationId = alarmConfig.notificationId
         } catch (e: Exception) {
             _scheduledDate.value = null
             Log.e("SetupClockViewModel", "Error scheduling alarm", e)
@@ -53,12 +56,20 @@ class SetupClockViewModel(
             _scheduledDate.value = null
 
             // Intent to cancel vibration
-            val cancelIntent = Intent(context, AlarmReceiver::class.java).apply {
-                action = "CANCEL_RINGTONE"
-            }
-            val cancelPendingIntent = PendingIntent.getBroadcast(context, 0, cancelIntent, PendingIntent.FLAG_IMMUTABLE)
+            notificationId?.let { id ->
+                val cancelIntent = Intent(context, AlarmReceiver::class.java).apply {
+                    action = "CANCEL_RINGTONE"
+                    putExtra("NOTIFICATION_ID", id)
+                }
+                val cancelPendingIntent = PendingIntent.getBroadcast(
+                    context,
+                    id,
+                    cancelIntent,
+                    PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                )
 
-            cancelPendingIntent.send()
+                cancelPendingIntent.send()
+            }
         } catch (e: Exception) {
             Log.e("SetupClockViewModel", "Error cancelling alarm", e)
         }
@@ -66,6 +77,10 @@ class SetupClockViewModel(
 
     fun showToast(context: Context, message: String) {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
+
+    fun clearScheduledDate() {
+        _scheduledDate.value = null
     }
 
 }

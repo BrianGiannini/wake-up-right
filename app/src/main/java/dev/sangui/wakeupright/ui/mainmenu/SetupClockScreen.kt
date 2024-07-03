@@ -12,7 +12,6 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,6 +23,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -42,17 +42,19 @@ import kotlinx.coroutines.flow.collectLatest
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
+const val noAlarmText = "No alarm scheduled"
+
 @Composable
 fun SetupClockScreen(
     setupClockViewModel: SetupClockViewModel,
     dataStoreManager: DataStoreManager,
     ringtonePickerLauncher: ActivityResultLauncher<Intent>,
 ) {
-
     val context = LocalContext.current
     var selectedHour by remember { mutableIntStateOf(0) }
     var selectedMinute by remember { mutableIntStateOf(0) }
-    var scheduledTime by remember { mutableStateOf<String?>(null) }
+    val scheduledDate by setupClockViewModel.scheduledDate.collectAsState()
+    val scheduledTime = scheduledDate?.format(DateTimeFormatter.ofPattern("EEEE HH:mm", Locale.getDefault())) ?: noAlarmText
     val scrollState = rememberScrollState()
     var notificationPermissionGranted by remember { mutableStateOf(false) }
 
@@ -95,13 +97,6 @@ fun SetupClockScreen(
                 .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            LaunchedEffect(setupClockViewModel) {
-                setupClockViewModel.scheduledDate.collectLatest { date ->
-                    scheduledTime =
-                        date?.format(DateTimeFormatter.ofPattern("EEEE HH:mm", Locale.getDefault()))
-                }
-            }
-
             // Top Elements
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -135,10 +130,12 @@ fun SetupClockScreen(
                 verticalArrangement = Arrangement.Center
             ) {
                 Button(
-                    modifier = Modifier
+                    enabled = scheduledTime == noAlarmText,
+                            modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
                         .padding(vertical = 8.dp),
+
                     onClick = {
                         if (notificationPermissionGranted) {
                             setupClockViewModel.scheduleAlarm(selectedHour, selectedMinute)
@@ -163,6 +160,7 @@ fun SetupClockScreen(
                 }
 
                 Button(
+                    enabled = scheduledTime != noAlarmText,
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
@@ -193,23 +191,13 @@ fun SetupClockScreen(
                     Text("Select Ringtone")
                 }
 
-                if (scheduledTime != null) {
-                    Text(
-                        text = "Alarm: $scheduledTime",
-                        style = TextStyle(fontSize = 18.sp),
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .padding(vertical = 8.dp),
-                    )
-                } else {
-                    Text(
-                        text = "No alarm scheduled",
-                        style = TextStyle(fontSize = 18.sp),
-                        modifier = Modifier
-                            .align(Alignment.CenterHorizontally)
-                            .padding(vertical = 8.dp),
-                    )
-                }
+                Text(
+                    text = scheduledTime,
+                    style = TextStyle(fontSize = 18.sp),
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(vertical = 8.dp),
+                )
             }
         }
     }
