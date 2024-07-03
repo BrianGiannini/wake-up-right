@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.PagerDefaults
@@ -38,10 +37,11 @@ fun NumberPicker(
     incrementNumber: Int = 1,
     onValueChange: (Int) -> Unit,
 ) {
-    BoxWithConstraints(modifier = Modifier.fillMaxWidth().padding(10.dp),) {
-        val contentPadding = (maxWidth - 100.dp) / 2
-        val offSet = maxWidth / 5
-        val itemSpacing = offSet - 50.dp
+    BoxWithConstraints(modifier = Modifier
+        .fillMaxWidth()
+        .padding(10.dp)) {
+        val contentPadding = (maxWidth - 50.dp) / 2
+        val itemSpacing = (maxWidth - contentPadding * 2) / 5
         val processMax = maxNumbers / incrementNumber
         val pagerState = rememberPagerState(pageCount = {
             processMax
@@ -81,13 +81,16 @@ fun NumberPicker(
                         val opacity = 0.25f + (percentFromCenter * 0.75f).coerceIn(0f, 1f)
                         alpha = opacity
                         clip = true
-                    }) {
+                    }
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+            ) {
                 Text(
                     text = "${page * incrementNumber}",
                     color = MaterialTheme.colorScheme.primary,
-                    fontSize = 75.sp,
+                    fontSize = 24.sp, // Scale font size based on screen width
                     modifier = Modifier
-                        .width(200.dp)
+                        .fillMaxWidth()
                         .wrapContentHeight(),
                     textAlign = TextAlign.Center
                 )

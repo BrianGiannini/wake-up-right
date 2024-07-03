@@ -9,17 +9,26 @@ import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -31,6 +40,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -38,7 +50,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import dev.sangui.wakeupright.alarm.DataStoreManager
-import kotlinx.coroutines.flow.collectLatest
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
@@ -54,7 +65,9 @@ fun SetupClockScreen(
     var selectedHour by remember { mutableIntStateOf(0) }
     var selectedMinute by remember { mutableIntStateOf(0) }
     val scheduledDate by setupClockViewModel.scheduledDate.collectAsState()
-    val scheduledTime = scheduledDate?.format(DateTimeFormatter.ofPattern("EEEE HH:mm", Locale.getDefault())) ?: noAlarmText
+    val scheduledTime =
+        scheduledDate?.format(DateTimeFormatter.ofPattern("EEEE HH:mm", Locale.getDefault()))
+            ?: noAlarmText
     val scrollState = rememberScrollState()
     var notificationPermissionGranted by remember { mutableStateOf(false) }
 
@@ -87,7 +100,7 @@ fun SetupClockScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .padding(all = 20.dp),
+            .padding(20.dp),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -101,7 +114,7 @@ fun SetupClockScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text("Hours", style = TextStyle(fontSize = 36.sp))
+                Text("Hours", style = TextStyle(fontSize = 26.sp))
                 NumberPicker(
                     dataStoreManager = dataStoreManager,
                     id = "hours",
@@ -109,7 +122,7 @@ fun SetupClockScreen(
                     onValueChange = { selectedHour = it }
                 )
                 Spacer(modifier = Modifier.height(10.dp))
-                Text("Minutes", style = TextStyle(fontSize = 36.sp))
+                Text("Minutes", style = TextStyle(fontSize = 26.sp))
                 NumberPicker(
                     dataStoreManager = dataStoreManager,
                     id = "minutes",
@@ -117,7 +130,6 @@ fun SetupClockScreen(
                     incrementNumber = 5,
                     onValueChange = { selectedMinute = it }
                 )
-                Spacer(modifier = Modifier.height(25.dp))
             }
 
             // Buttons and Scheduled Time
@@ -128,13 +140,15 @@ fun SetupClockScreen(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {
+                val buttonModifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+                    .weight(1f, fill = true)
+                    .heightIn(min = 56.dp) // Ensure minimum height for the button
+
                 Button(
                     enabled = scheduledTime == noAlarmText,
-                            modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .padding(vertical = 8.dp),
-
+                    modifier = buttonModifier,
                     onClick = {
                         if (notificationPermissionGranted) {
                             setupClockViewModel.scheduleAlarm(selectedHour, selectedMinute)
@@ -152,7 +166,7 @@ fun SetupClockScreen(
                     },
                 ) {
                     Text(
-                        fontSize = 24.sp,
+                        fontSize = 28.sp,
                         text = "Sleep",
                         textAlign = TextAlign.Center,
                     )
@@ -160,43 +174,62 @@ fun SetupClockScreen(
 
                 Button(
                     enabled = scheduledTime != noAlarmText,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .padding(vertical = 8.dp),
+                    modifier = buttonModifier,
                     onClick = {
                         setupClockViewModel.cancelAlarm(context)
                         setupClockViewModel.showToast(context, "Alarm Cancelled")
                     },
                 ) {
                     Text(
-                        fontSize = 24.sp,
+                        fontSize = 28.sp,
                         text = "Cancel",
                     )
                 }
 
-                Button(onClick = {
-                    val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
-                        putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
-                        putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select Alarm Ringtone")
-                        putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false)
-                        putExtra(
-                            RingtoneManager.EXTRA_RINGTONE_EXISTING_URI,
-                            RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
-                        )
-                    }
-                    ringtonePickerLauncher.launch(intent)
-                }) {
-                    Text("Select Ringtone")
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = scheduledTime,
+                        style = TextStyle(fontSize = 14.sp),
+                        modifier = Modifier
+                            .padding(vertical = 8.dp),
+                    )
+
+                    IconButton(
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .height(40.dp),
+                        onClick = {
+                            val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
+                                putExtra(
+                                    RingtoneManager.EXTRA_RINGTONE_TYPE,
+                                    RingtoneManager.TYPE_ALARM
+                                )
+                                putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select Alarm Ringtone")
+                                putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false)
+                                putExtra(
+                                    RingtoneManager.EXTRA_RINGTONE_EXISTING_URI,
+                                    RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+                                )
+                            }
+                            ringtonePickerLauncher.launch(intent)
+                        }
+                    ) {
+                        val ringDesign: Painter = rememberVectorPainter(image = Icons.Filled.Notifications)
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .background(color = Color.Gray, shape = CircleShape)
+                        ) {
+                            Icon(
+                                painter = ringDesign,
+                                contentDescription = "Ring",
+                                modifier = Modifier
+                                    .size(24.dp)
+                                    .align(Alignment.Center)
+                            )
+                        }                    }
                 }
 
-                Text(
-                    text = scheduledTime,
-                    style = TextStyle(fontSize = 18.sp),
-                    modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(vertical = 8.dp),
-                )
             }
         }
     }
