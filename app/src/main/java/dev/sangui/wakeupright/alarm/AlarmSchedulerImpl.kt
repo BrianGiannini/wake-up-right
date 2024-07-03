@@ -10,10 +10,6 @@ import java.time.ZoneId
 
 class AlarmSchedulerImpl(private val context: Context) : AlarmScheduler {
 
-    private fun LocalDateTime.toMillis(zoneId: ZoneId = ZoneId.systemDefault()): Long {
-        return this.atZone(zoneId).toInstant().toEpochMilli()
-    }
-
     override fun schedule(alarmItem: AlarmItem) {
         Log.d("AlarmScheduler", "Scheduling alarm for ${alarmItem.alarmTime}")
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -28,8 +24,7 @@ class AlarmSchedulerImpl(private val context: Context) : AlarmScheduler {
         )
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
-//            convertTime(alarmItem.alarmTime),
-            LocalDateTime.now().plusSeconds(5).toMillis(),
+            convertTime(alarmItem.alarmTime),
             pendingIntent
         )
     }

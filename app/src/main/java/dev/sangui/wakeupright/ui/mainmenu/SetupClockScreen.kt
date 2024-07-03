@@ -90,7 +90,6 @@ fun SetupClockScreen(
             .padding(all = 20.dp),
         contentAlignment = Alignment.Center
     ) {
-
         Column(
             modifier = Modifier
                 .fillMaxSize()

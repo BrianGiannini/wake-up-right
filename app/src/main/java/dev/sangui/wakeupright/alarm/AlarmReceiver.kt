@@ -52,8 +52,6 @@ class AlarmReceiver : BroadcastReceiver() {
         val channelId = "alarm_id"
         val notificationId = intent.getIntExtra("NOTIFICATION_ID", alarmConfig.notificationId)
 
-        Log.d("hello", "notificationId: $notificationId")
-
         context.let { ctx ->
             val notificationManager =
                 ctx?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
