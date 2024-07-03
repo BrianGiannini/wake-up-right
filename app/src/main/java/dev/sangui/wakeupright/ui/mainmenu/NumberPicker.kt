@@ -62,14 +62,6 @@ fun NumberPicker(
             }
         }
 
-//        CenterCircle(
-//            modifier = modifier
-//                .size(100.dp)
-//                .align(Alignment.Center),
-//            fillColor = Color.Red,
-//            strokeWidth = 1.dp
-//        )
-
         HorizontalPager(
             state = pagerState,
             flingBehavior = PagerDefaults.flingBehavior(
