@@ -38,7 +38,6 @@ import kotlinx.coroutines.flow.collectLatest
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-
 @Composable
 fun SetupClockScreen(setupClockViewModel: SetupClockViewModel, dataStoreManager: DataStoreManager) {
     val context = LocalContext.current

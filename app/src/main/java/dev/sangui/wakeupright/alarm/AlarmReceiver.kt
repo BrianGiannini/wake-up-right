@@ -58,19 +58,20 @@ class AlarmReceiver : BroadcastReceiver() {
                 action = "CANCEL_RINGTONE"
                 putExtra("NOTIFICATION_ID", notificationId)
             }
-            val cancelPendingIntent = PendingIntent.getBroadcast(ctx, 0, cancelIntent, PendingIntent.FLAG_IMMUTABLE)
+            val cancelPendingIntent = PendingIntent.getBroadcast(ctx, notificationId, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
             // intent to erase notification when swipe
             val deleteIntent = Intent(ctx, AlarmReceiver::class.java).apply {
                 action = "CANCEL_RINGTONE"
+                putExtra("NOTIFICATION_ID", notificationId)
             }
-            val deletePendingIntent = PendingIntent.getBroadcast(ctx, 1, deleteIntent, PendingIntent.FLAG_IMMUTABLE)
+            val deletePendingIntent = PendingIntent.getBroadcast(ctx, notificationId + 1, deleteIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
             // Intent to open the app
             val openAppIntent = Intent(ctx, MainActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             }
-            val openAppPendingIntent = PendingIntent.getActivity(ctx, 0, openAppIntent, PendingIntent.FLAG_IMMUTABLE)
+            val openAppPendingIntent = PendingIntent.getActivity(ctx, notificationId + 2, openAppIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
             val builder = NotificationCompat.Builder(ctx, channelId)
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
