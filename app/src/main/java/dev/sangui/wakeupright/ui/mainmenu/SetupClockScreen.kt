@@ -1,14 +1,18 @@
 package dev.sangui.wakeupright.ui.mainmenu
 
 import android.Manifest.permission.POST_NOTIFICATIONS
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.RingtoneManager
 import android.os.Build
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -39,7 +43,12 @@ import java.time.format.DateTimeFormatter
 import java.util.Locale
 
 @Composable
-fun SetupClockScreen(setupClockViewModel: SetupClockViewModel, dataStoreManager: DataStoreManager) {
+fun SetupClockScreen(
+    setupClockViewModel: SetupClockViewModel,
+    dataStoreManager: DataStoreManager,
+    ringtonePickerLauncher: ActivityResultLauncher<Intent>,
+) {
+
     val context = LocalContext.current
     var selectedHour by remember { mutableIntStateOf(0) }
     var selectedMinute by remember { mutableIntStateOf(0) }
@@ -54,13 +63,20 @@ fun SetupClockScreen(setupClockViewModel: SetupClockViewModel, dataStoreManager:
         if (isGranted) {
             Toast.makeText(context, "Notification permission granted", Toast.LENGTH_SHORT).show()
         } else {
-            Toast.makeText(context, "Notification permission denied, please enable it in the app settings", Toast.LENGTH_LONG).show()
+            Toast.makeText(
+                context,
+                "Notification permission denied, please enable it in the app settings",
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 
     LaunchedEffect(Unit) {
         notificationPermissionGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            ContextCompat.checkSelfPermission(context, POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED
+            ContextCompat.checkSelfPermission(
+                context,
+                POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED
         } else {
             true
         }
@@ -81,7 +97,8 @@ fun SetupClockScreen(setupClockViewModel: SetupClockViewModel, dataStoreManager:
         ) {
             LaunchedEffect(setupClockViewModel) {
                 setupClockViewModel.scheduledDate.collectLatest { date ->
-                    scheduledTime = date?.format(DateTimeFormatter.ofPattern("EEEE HH:mm", Locale.getDefault()))
+                    scheduledTime =
+                        date?.format(DateTimeFormatter.ofPattern("EEEE HH:mm", Locale.getDefault()))
                 }
             }
 
@@ -130,7 +147,10 @@ fun SetupClockScreen(setupClockViewModel: SetupClockViewModel, dataStoreManager:
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                 launcher.launch(POST_NOTIFICATIONS)
                             } else {
-                                setupClockViewModel.showToast(context, "Notification permission is required to schedule the alarm")
+                                setupClockViewModel.showToast(
+                                    context,
+                                    "Notification permission is required to schedule the alarm"
+                                )
                             }
                         }
                     },
@@ -156,6 +176,21 @@ fun SetupClockScreen(setupClockViewModel: SetupClockViewModel, dataStoreManager:
                         fontSize = 24.sp,
                         text = "Cancel",
                     )
+                }
+
+                Button(onClick = {
+                    val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
+                        putExtra(RingtoneManager.EXTRA_RINGTONE_TYPE, RingtoneManager.TYPE_ALARM)
+                        putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select Alarm Ringtone")
+                        putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false)
+                        putExtra(
+                            RingtoneManager.EXTRA_RINGTONE_EXISTING_URI,
+                            RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+                        )
+                    }
+                    ringtonePickerLauncher.launch(intent)
+                }) {
+                    Text("Select Ringtone")
                 }
 
                 if (scheduledTime != null) {

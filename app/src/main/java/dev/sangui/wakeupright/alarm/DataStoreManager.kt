@@ -3,6 +3,7 @@ package dev.sangui.wakeupright.alarm
 import android.content.Context
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -27,6 +28,21 @@ class DataStoreManager(private val context: Context) {
         val key = intPreferencesKey("selected_number_$id")
         context.dataStore.edit { preferences ->
             preferences[key] = number
+        }
+    }
+
+    fun selectedRingtoneFlow(): Flow<String?> {
+        val key = stringPreferencesKey("selected_ringtone")
+        return context.dataStore.data
+            .map { preferences ->
+                preferences[key]
+            }
+    }
+
+    suspend fun saveSelectedRingtone(uri: String) {
+        val key = stringPreferencesKey("selected_ringtone")
+        context.dataStore.edit { preferences ->
+            preferences[key] = uri
         }
     }
 }
