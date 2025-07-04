@@ -5,13 +5,12 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import java.time.LocalDateTime
-import java.time.ZoneId
+import java.util.Calendar
 
 class AlarmSchedulerImpl(private val context: Context) : AlarmScheduler {
 
     override fun schedule(alarmItem: AlarmItem) {
-        Log.d("AlarmScheduler", "Scheduling alarm for ${alarmItem.alarmTime}")
+        Log.d("AlarmScheduler", "Scheduling alarm for ${alarmItem.alarmTime.time}")
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, AlarmReceiver::class.java)
         intent.putExtra("EXTRA_MESSAGE", alarmItem.message)
@@ -24,15 +23,9 @@ class AlarmSchedulerImpl(private val context: Context) : AlarmScheduler {
         )
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
-            convertTime(alarmItem.alarmTime),
+            alarmItem.alarmTime.timeInMillis,
             pendingIntent
         )
-    }
-
-    private fun convertTime(alarmItem: LocalDateTime): Long {
-        val zonedDateTime = alarmItem.atZone(ZoneId.systemDefault())
-        val alarmTimeInMillis = zonedDateTime.toInstant().toEpochMilli()
-        return alarmTimeInMillis
     }
 
     override fun cancel(requestCode: Int) {

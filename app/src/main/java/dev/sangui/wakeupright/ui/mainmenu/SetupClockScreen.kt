@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.media.RingtoneManager
 import android.os.Build
 import android.widget.Toast
+
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -26,9 +27,11 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Snackbar
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -50,7 +53,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import dev.sangui.wakeupright.alarm.DataStoreManager
-import java.time.format.DateTimeFormatter
+import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Locale
 
 const val noAlarmText = "No alarm scheduled"
@@ -65,14 +69,16 @@ fun SetupClockScreen(
     var selectedHour by remember { mutableIntStateOf(0) }
     var selectedMinute by remember { mutableIntStateOf(0) }
     val scheduledDate by setupClockViewModel.scheduledDate.collectAsState()
+    val snackbarMessage by setupClockViewModel.snackbarMessage.collectAsState()
     val scheduledTime =
-        scheduledDate?.format(DateTimeFormatter.ofPattern("EEEE HH:mm", Locale.getDefault()))
-            ?: noAlarmText
+        scheduledDate?.let {
+            SimpleDateFormat("EEEE HH:mm", Locale.getDefault()).format(it.time)
+        } ?: noAlarmText
     val scrollState = rememberScrollState()
     var notificationPermissionGranted by remember { mutableStateOf(false) }
 
     val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.RequestPermission()
+        contract = ActivityResultContracts.RequestPermission(),
     ) { isGranted: Boolean ->
         notificationPermissionGranted = isGranted
         if (isGranted) {
@@ -81,7 +87,7 @@ fun SetupClockScreen(
             Toast.makeText(
                 context,
                 "Notification permission denied, please enable it in the app settings",
-                Toast.LENGTH_LONG
+                Toast.LENGTH_LONG,
             ).show()
         }
     }
@@ -90,7 +96,7 @@ fun SetupClockScreen(
         notificationPermissionGranted = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             ContextCompat.checkSelfPermission(
                 context,
-                POST_NOTIFICATIONS
+                POST_NOTIFICATIONS,
             ) == PackageManager.PERMISSION_GRANTED
         } else {
             true
@@ -101,7 +107,7 @@ fun SetupClockScreen(
         modifier = Modifier
             .fillMaxSize()
             .padding(20.dp),
-        contentAlignment = Alignment.Center
+        contentAlignment = Alignment.Center,
     ) {
         Column(
             modifier = Modifier
@@ -112,14 +118,14 @@ fun SetupClockScreen(
             // Top Elements
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 Text("Hours", style = TextStyle(fontSize = 26.sp))
                 NumberPicker(
                     dataStoreManager = dataStoreManager,
                     id = "hours",
                     maxNumbers = 24,
-                    onValueChange = { selectedHour = it }
+                    onValueChange = { selectedHour = it },
                 )
                 Spacer(modifier = Modifier.height(10.dp))
                 Text("Minutes", style = TextStyle(fontSize = 26.sp))
@@ -128,7 +134,7 @@ fun SetupClockScreen(
                     id = "minutes",
                     maxNumbers = 60,
                     incrementNumber = 5,
-                    onValueChange = { selectedMinute = it }
+                    onValueChange = { selectedMinute = it },
                 )
             }
 
@@ -138,7 +144,7 @@ fun SetupClockScreen(
                     .fillMaxWidth()
                     .weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
+                verticalArrangement = Arrangement.Center,
             ) {
                 val buttonModifier = Modifier
                     .fillMaxWidth()
@@ -152,14 +158,13 @@ fun SetupClockScreen(
                     onClick = {
                         if (notificationPermissionGranted) {
                             setupClockViewModel.scheduleAlarm(selectedHour, selectedMinute)
-                            setupClockViewModel.showToast(context, "Alarm Scheduled")
+                            setupClockViewModel.showSnackbar("Alarm Scheduled")
                         } else {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                 launcher.launch(POST_NOTIFICATIONS)
                             } else {
-                                setupClockViewModel.showToast(
-                                    context,
-                                    "Notification permission is required to schedule the alarm"
+                                setupClockViewModel.showSnackbar(
+                                    "Notification permission is required to schedule the alarm",
                                 )
                             }
                         }
@@ -177,7 +182,7 @@ fun SetupClockScreen(
                     modifier = buttonModifier,
                     onClick = {
                         setupClockViewModel.cancelAlarm(context)
-                        setupClockViewModel.showToast(context, "Alarm Cancelled")
+                        setupClockViewModel.showSnackbar("Alarm Cancelled")
                     },
                 ) {
                     Text(
@@ -202,34 +207,50 @@ fun SetupClockScreen(
                             val intent = Intent(RingtoneManager.ACTION_RINGTONE_PICKER).apply {
                                 putExtra(
                                     RingtoneManager.EXTRA_RINGTONE_TYPE,
-                                    RingtoneManager.TYPE_ALARM
+                                    RingtoneManager.TYPE_ALARM,
                                 )
                                 putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select Alarm Ringtone")
                                 putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false)
                                 putExtra(
                                     RingtoneManager.EXTRA_RINGTONE_EXISTING_URI,
-                                    RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+                                    RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM),
                                 )
                             }
                             ringtonePickerLauncher.launch(intent)
-                        }
+                        },
                     ) {
                         val ringDesign: Painter = rememberVectorPainter(image = Icons.Filled.Notifications)
                         Box(
                             modifier = Modifier
                                 .size(40.dp)
-                                .background(color = Color.Gray, shape = CircleShape)
+                                .background(color = Color.Gray, shape = CircleShape),
                         ) {
                             Icon(
                                 painter = ringDesign,
                                 contentDescription = "Ring",
                                 modifier = Modifier
                                     .size(24.dp)
-                                    .align(Alignment.Center)
+                                    .align(Alignment.Center),
                             )
-                        }                    }
+                        }
+                    }
                 }
-
+            }
+        }
+        snackbarMessage?.let { message ->
+            Snackbar(
+                modifier = Modifier.padding(16.dp),
+                action = {
+                    IconButton(onClick = { setupClockViewModel.dismissSnackbar() }) {
+                        Icon(Icons.Default.Close, contentDescription = "Dismiss")
+                    }
+                },
+            ) {
+                Text(message)
+            }
+            LaunchedEffect(message) {
+                kotlinx.coroutines.delay(3000) // 3 seconds
+                setupClockViewModel.dismissSnackbar()
             }
         }
     }

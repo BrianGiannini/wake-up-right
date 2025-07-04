@@ -5,7 +5,6 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import dev.sangui.wakeupright.alarm.AlarmConfig
 import dev.sangui.wakeupright.alarm.AlarmItem
@@ -14,7 +13,7 @@ import dev.sangui.wakeupright.alarm.AlarmScheduler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import java.time.LocalDateTime
+import java.util.Calendar
 
 
 class SetupClockViewModel(
@@ -25,13 +24,34 @@ class SetupClockViewModel(
 
 
     private var alarmItem: AlarmItem? = null
-    private val _scheduledDate = MutableStateFlow<LocalDateTime?>(null)
-    val scheduledDate: StateFlow<LocalDateTime?> get() = _scheduledDate.asStateFlow()
+    private val _scheduledDate = MutableStateFlow<Calendar?>(null)
+    val scheduledDate: StateFlow<Calendar?> get() = _scheduledDate.asStateFlow()
+
+    private val _snackbarMessage = MutableStateFlow<String?>(null)
+    val snackbarMessage: StateFlow<String?> = _snackbarMessage.asStateFlow()
 
     private var notificationId: Int? = null
 
+    fun showSnackbar(message: String) {
+        _snackbarMessage.value = message
+    }
+
+    fun dismissSnackbar() {
+        _snackbarMessage.value = null
+    }
+
     fun scheduleAlarm(hours: Int, minutes: Int) {
-        val time = LocalDateTime.now().plusHours(hours.toLong()).plusMinutes(minutes.toLong())
+        val time = Calendar.getInstance().apply {
+            set(Calendar.HOUR_OF_DAY, hours)
+            set(Calendar.MINUTE, minutes)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+
+            // If the selected time is in the past, add a day
+            if (before(Calendar.getInstance())) {
+                add(Calendar.DAY_OF_YEAR, 1)
+            }
+        }
         alarmItem = AlarmItem(
             alarmTime = time,
             message = "Wake up!",
@@ -73,10 +93,6 @@ class SetupClockViewModel(
         } catch (e: Exception) {
             Log.e("SetupClockViewModel", "Error cancelling alarm", e)
         }
-    }
-
-    fun showToast(context: Context, message: String) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 
     fun clearScheduledDate() {

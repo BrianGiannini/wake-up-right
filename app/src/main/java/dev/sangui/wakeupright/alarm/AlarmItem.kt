@@ -1,8 +1,8 @@
 package dev.sangui.wakeupright.alarm
 
-import java.time.LocalDateTime
+import java.util.Calendar
 
 data class AlarmItem(
-    val alarmTime : LocalDateTime,
+    val alarmTime : Calendar,
     val message : String,
 )
