@@ -15,7 +15,6 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
 
-
     <application
         android:name=".AppApplication"
         android:allowBackup="true"
@@ -33,7 +32,6 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:screenOrientation="portrait"
             android:theme="@style/Theme.WakeUpRight">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
