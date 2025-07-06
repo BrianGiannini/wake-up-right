@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Wake up Right</string>
+    <string name="alarm_channel_name">Canal de alarma</string>
+    <string name="alarm_channel_description">Canal para el administrador de alarmas</string>
+    <string name="notification_title">¡Es hora de despertar!</string>
+    <string name="notification_big_text">Su alarma está sonando. Toque para abrir la aplicación o descartar.</string>
+    <string name="notification_dismiss_action">Descartar</string>
+    <string name="no_alarm_scheduled">No hay alarma programada</string>
+    <string name="notification_permission_granted">Permiso de notificación concedido</string>
+    <string name="notification_permission_denied">Permiso de notificación denegado, por favor habilítelo en la configuración de la aplicación</string>
+    <string name="hours_to_sleep">Horas para dormir</string>
+    <string name="minutes_to_sleep">Minutos para dormir</string>
+    <string name="alarm_scheduled">Alarma programada</string>
+    <string name="notification_permission_required">Se requiere permiso de notificación para programar la alarma</string>
+    <string name="sleep_button_text">Dormir</string>
+    <string name="alarm_cancelled">Alarma cancelada</string>
+    <string name="cancel_button_text">Cancelar</string>
+    <string name="select_alarm_ringtone">Seleccionar tono de alarma</string>
+    <string name="ring_content_description">Timbre</string>
+    <string name="dismiss_content_description">Descartar</string>
+    <string name="alarm_message">¡Despierta!</string>
+    <string name="error_scheduling_alarm">Error al programar la alarma</string>
+    <string name="error_cancelling_alarm">Error al cancelar la alarma</string>
+</resources>

@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">ちょうどいい目覚まし</string>
+    <string name="alarm_channel_name">アラームチャンネル</string>
+    <string name="alarm_channel_description">アラームマネージャー用チャンネル</string>
+    <string name="notification_title">起きる時間です！</string>
+    <string name="notification_big_text">アラームが鳴っています。タップしてアプリを開くか、閉じる。</string>
+    <string name="notification_dismiss_action">閉じる</string>
+    <string name="no_alarm_scheduled">アラームは設定されていません</string>
+    <string name="notification_permission_granted">通知の許可が与えられました</string>
+    <string name="notification_permission_denied">通知の許可が拒否されました。アプリの設定で有効にしてください</string>
+    <string name="hours_to_sleep">睡眠時間（時間）</string>
+    <string name="minutes_to_sleep">睡眠時間（分）</string>
+    <string name="alarm_scheduled">アラームが設定されました</string>
+    <string name="notification_permission_required">アラームを設定するには通知の許可が必要です</string>
+    <string name="sleep_button_text">寝る</string>
+    <string name="alarm_cancelled">アラームがキャンセルされました</string>
+    <string name="cancel_button_text">キャンセル</string>
+    <string name="select_alarm_ringtone">アラームの着信音を選択</string>
+    <string name="ring_content_description">鳴らす</string>
+    <string name="dismiss_content_description">閉じる</string>
+    <string name="alarm_message">起きろ！</string>
+    <string name="error_scheduling_alarm">アラームのスケジュール中にエラーが発生しました</string>
+    <string name="error_cancelling_alarm">アラームのキャンセル中にエラーが発生しました</string>
+</resources>

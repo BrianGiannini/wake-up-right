@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">刚刚好的闹钟</string>
+    <string name="alarm_channel_name">闹钟频道</string>
+    <string name="alarm_channel_description">闹钟管理器频道</string>
+    <string name="notification_title">起床时间到了！</string>
+    <string name="notification_big_text">您的闹钟正在响铃。点击打开应用程序或关闭。</string>
+    <string name="notification_dismiss_action">关闭</string>
+    <string name="no_alarm_scheduled">未设置闹钟</string>
+    <string name="notification_permission_granted">通知权限已授予</string>
+    <string name="notification_permission_denied">通知权限被拒绝，请在应用设置中启用</string>
+    <string name="hours_to_sleep">睡眠小时</string>
+    <string name="minutes_to_sleep">睡眠分钟</string>
+    <string name="alarm_scheduled">闹钟已设置</string>
+    <string name="notification_permission_required">需要通知权限才能设置闹钟</string>
+    <string name="sleep_button_text">睡觉</string>
+    <string name="alarm_cancelled">闹钟已取消</string>
+    <string name="cancel_button_text">取消</string>
+    <string name="select_alarm_ringtone">选择闹钟铃声</string>
+    <string name="ring_content_description">响铃</string>
+    <string name="dismiss_content_description">关闭</string>
+    <string name="alarm_message">起床！</string>
+    <string name="error_scheduling_alarm">设置闹钟时出错</string>
+    <string name="error_cancelling_alarm">取消闹钟时出错</string>
+</resources>

@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Wake up right</string>
+    <string name="app_name">Wake up Right</string>
     <string name="alarm_channel_name">Alarm Channel</string>
     <string name="alarm_channel_description">Channel for Alarm Manager</string>
     <string name="notification_title">Time to Wake Up!</string>

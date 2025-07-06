@@ -156,7 +156,7 @@ fun SetupClockScreen(
                     dataStoreManager = dataStoreManager,
                     id = "minutes",
                     maxNumbers = 60,
-                    incrementNumber = 1,
+                    incrementNumber = 5,
                     onValueChange = { selectedMinute = it },
                 )
             }

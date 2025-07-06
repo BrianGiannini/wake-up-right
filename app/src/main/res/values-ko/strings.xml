@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">딱 좋은 알람</string>
+    <string name="alarm_channel_name">알람 채널</string>
+    <string name="alarm_channel_description">알람 관리자용 채널</string>
+    <string name="notification_title">일어날 시간입니다!</string>
+    <string name="notification_big_text">알람이 울리고 있습니다. 탭하여 앱을 열거나 닫으세요.</string>
+    <string name="notification_dismiss_action">닫기</string>
+    <string name="no_alarm_scheduled">예정된 알람 없음</string>
+    <string name="notification_permission_granted">알림 권한이 부여되었습니다</string>
+    <string name="notification_permission_denied">알림 권한이 거부되었습니다. 앱 설정에서 활성화해주세요</string>
+    <string name="hours_to_sleep">수면 시간 (시간)</string>
+    <string name="minutes_to_sleep">수면 시간 (분)</string>
+    <string name="alarm_scheduled">알람이 예약되었습니다</string>
+    <string name="notification_permission_required">알람을 예약하려면 알림 권한이 필요합니다</string>
+    <string name="sleep_button_text">잠자기</string>
+    <string name="alarm_cancelled">알람이 취소되었습니다</string>
+    <string name="cancel_button_text">취소</string>
+    <string name="select_alarm_ringtone">알람 벨소리 선택</string>
+    <string name="ring_content_description">벨소리</string>
+    <string name="dismiss_content_description">닫기</string>
+    <string name="alarm_message">일어나!</string>
+    <string name="error_scheduling_alarm">알람 예약 오류</string>
+    <string name="error_cancelling_alarm">알람 취소 오류</string>
+</resources>

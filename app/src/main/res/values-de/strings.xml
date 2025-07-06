@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Wake up Right</string>
+    <string name="alarm_channel_name">Alarmkanal</string>
+    <string name="alarm_channel_description">Kanal für den Alarmmanager</string>
+    <string name="notification_title">Zeit aufzuwachen!</string>
+    <string name="notification_big_text">Ihr Wecker klingelt. Tippen Sie, um die App zu öffnen oder zu schließen.</string>
+    <string name="notification_dismiss_action">Schließen</string>
+    <string name="no_alarm_scheduled">Kein Alarm geplant</string>
+    <string name="notification_permission_granted">Benachrichtigungsberechtigung erteilt</string>
+    <string name="notification_permission_denied">Benachrichtigungsberechtigung verweigert, bitte in den App-Einstellungen aktivieren</string>
+    <string name="hours_to_sleep">Stunden zu schlafen</string>
+    <string name="minutes_to_sleep">Minuten zu schlafen</string>
+    <string name="alarm_scheduled">Alarm geplant</string>
+    <string name="notification_permission_required">Benachrichtigungsberechtigung ist erforderlich, um den Alarm zu planen</string>
+    <string name="sleep_button_text">Schlafen</string>
+    <string name="alarm_cancelled">Alarm abgebrochen</string>
+    <string name="cancel_button_text">Abbrechen</string>
+    <string name="select_alarm_ringtone">Alarmklingelton auswählen</string>
+    <string name="ring_content_description">Klingeln</string>
+    <string name="dismiss_content_description">Schließen</string>
+    <string name="alarm_message">Wach auf!</string>
+    <string name="error_scheduling_alarm">Fehler beim Planen des Alarms</string>
+    <string name="error_cancelling_alarm">Fehler beim Abbrechen des Alarms</string>
+</resources>

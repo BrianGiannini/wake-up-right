@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Wake up Right</string>
+    <string name="alarm_channel_name">Canal d\'alarme</string>
+    <string name="alarm_channel_description">Canal pour le gestionnaire d\'alarmes</string>
+    <string name="notification_title">Il est temps de se réveiller !</string>
+    <string name="notification_big_text">Votre alarme sonne. Appuyez pour ouvrir l\'application ou ignorer.</string>
+    <string name="notification_dismiss_action">Ignorer</string>
+    <string name="no_alarm_scheduled">Aucune alarme programmée</string>
+    <string name="notification_permission_granted">Autorisation de notification accordée</string>
+    <string name="notification_permission_denied">Autorisation de notification refusée, veuillez l\'activer dans les paramètres de l\'application</string>
+    <string name="hours_to_sleep">Heures de sommeil</string>
+    <string name="minutes_to_sleep">Minutes de sommeil</string>
+    <string name="alarm_scheduled">Alarme programmée</string>
+    <string name="notification_permission_required">L\'autorisation de notification est requise pour programmer l\'alarme</string>
+    <string name="sleep_button_text">Dormir</string>
+    <string name="alarm_cancelled">Alarme annulée</string>
+    <string name="cancel_button_text">Annuler</string>
+    <string name="select_alarm_ringtone">Sélectionner la sonnerie d\'alarme</string>
+    <string name="ring_content_description">Sonnerie</string>
+    <string name="dismiss_content_description">Ignorer</string>
+    <string name="alarm_message">Réveillez-vous !</string>
+    <string name="error_scheduling_alarm">Erreur lors de la programmation de l\'alarme</string>
+    <string name="error_cancelling_alarm">Erreur lors de l\'annulation de l\'alarme</string>
+</resources>
