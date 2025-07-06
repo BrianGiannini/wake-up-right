@@ -1,3 +1,24 @@
 <resources>
     <string name="app_name">Wake up right</string>
+    <string name="alarm_channel_name">Alarm Channel</string>
+    <string name="alarm_channel_description">Channel for Alarm Manager</string>
+    <string name="notification_title">Time to Wake Up!</string>
+    <string name="notification_big_text">Your alarm is ringing. Tap to open the app or dismiss.</string>
+    <string name="notification_dismiss_action">Dismiss</string>
+    <string name="no_alarm_scheduled">No alarm scheduled</string>
+    <string name="notification_permission_granted">Notification permission granted</string>
+    <string name="notification_permission_denied">Notification permission denied, please enable it in the app settings</string>
+    <string name="hours_to_sleep">Hours to sleep</string>
+    <string name="minutes_to_sleep">Minutes to sleep</string>
+    <string name="alarm_scheduled">Alarm Scheduled</string>
+    <string name="notification_permission_required">Notification permission is required to schedule the alarm</string>
+    <string name="sleep_button_text">Sleep</string>
+    <string name="alarm_cancelled">Alarm Cancelled</string>
+    <string name="cancel_button_text">Cancel</string>
+    <string name="select_alarm_ringtone">Select Alarm Ringtone</string>
+    <string name="ring_content_description">Ring</string>
+    <string name="dismiss_content_description">Dismiss</string>
+    <string name="alarm_message">Wake up!</string>
+    <string name="error_scheduling_alarm">Error scheduling alarm</string>
+    <string name="error_cancelling_alarm">Error cancelling alarm</string>
 </resources>

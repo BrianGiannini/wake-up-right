@@ -10,7 +10,8 @@ koinCompose = "4.0.4"
 datastore = "1.1.7"
 compileSdk = "36"
 targetSdk = "36"
-minSdk = "24"
+minSdk = "26"
+localbroadcastmanager = "1.0.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -23,6 +24,7 @@ androidx-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-tooling-preview" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "datastore" }
+androidx-localbroadcastmanager = { group = "androidx.localbroadcastmanager", name = "localbroadcastmanager", version.ref = "localbroadcastmanager" }
 
 #Koin
 koinAndroid = { module = "io.insert-koin:koin-android", version.ref = "koin" }

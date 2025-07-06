@@ -5,7 +5,8 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import java.util.Calendar
+
+import dev.sangui.wakeupright.Constants
 
 class AlarmSchedulerImpl(private val context: Context) : AlarmScheduler {
 
@@ -13,7 +14,7 @@ class AlarmSchedulerImpl(private val context: Context) : AlarmScheduler {
         Log.d("AlarmScheduler", "Scheduling alarm for ${alarmItem.alarmTime.time}")
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, AlarmReceiver::class.java)
-        intent.putExtra("EXTRA_MESSAGE", alarmItem.message)
+        intent.putExtra(Constants.EXTRA_MESSAGE, alarmItem.message)
 
         val pendingIntent = PendingIntent.getBroadcast(
             context,

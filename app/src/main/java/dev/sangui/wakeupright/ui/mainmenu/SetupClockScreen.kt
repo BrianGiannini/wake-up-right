@@ -54,10 +54,18 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import dev.sangui.wakeupright.alarm.DataStoreManager
 import java.text.SimpleDateFormat
-import java.util.Calendar
+import androidx.compose.runtime.DisposableEffect
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.IntentFilter
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import java.util.Locale
 
-const val noAlarmText = "No alarm scheduled"
+import androidx.compose.ui.res.stringResource
+import dev.sangui.wakeupright.Constants
+import dev.sangui.wakeupright.R
+
+
 
 @Composable
 fun SetupClockScreen(
@@ -73,7 +81,7 @@ fun SetupClockScreen(
     val scheduledTime =
         scheduledDate?.let {
             SimpleDateFormat("EEEE HH:mm", Locale.getDefault()).format(it.time)
-        } ?: noAlarmText
+        } ?: stringResource(R.string.no_alarm_scheduled)
     val scrollState = rememberScrollState()
     var notificationPermissionGranted by remember { mutableStateOf(false) }
 
@@ -82,11 +90,11 @@ fun SetupClockScreen(
     ) { isGranted: Boolean ->
         notificationPermissionGranted = isGranted
         if (isGranted) {
-            Toast.makeText(context, "Notification permission granted", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, context.getString(R.string.notification_permission_granted), Toast.LENGTH_SHORT).show()
         } else {
             Toast.makeText(
                 context,
-                "Notification permission denied, please enable it in the app settings",
+                context.getString(R.string.notification_permission_denied),
                 Toast.LENGTH_LONG,
             ).show()
         }
@@ -100,6 +108,21 @@ fun SetupClockScreen(
             ) == PackageManager.PERMISSION_GRANTED
         } else {
             true
+        }
+    }
+
+    DisposableEffect(context) {
+        val alarmDismissReceiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                if (intent?.action == Constants.ACTION_ALARM_DISMISSED) {
+                    setupClockViewModel.clearScheduledDate()
+                }
+            }
+        }
+        LocalBroadcastManager.getInstance(context).registerReceiver(alarmDismissReceiver, IntentFilter(Constants.ACTION_ALARM_DISMISSED))
+
+        onDispose {
+            LocalBroadcastManager.getInstance(context).unregisterReceiver(alarmDismissReceiver)
         }
     }
 
@@ -120,7 +143,7 @@ fun SetupClockScreen(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                Text("Hours", style = TextStyle(fontSize = 26.sp))
+                Text(stringResource(R.string.hours_to_sleep), style = TextStyle(fontSize = 26.sp))
                 NumberPicker(
                     dataStoreManager = dataStoreManager,
                     id = "hours",
@@ -128,12 +151,12 @@ fun SetupClockScreen(
                     onValueChange = { selectedHour = it },
                 )
                 Spacer(modifier = Modifier.height(10.dp))
-                Text("Minutes", style = TextStyle(fontSize = 26.sp))
+                Text(stringResource(R.string.minutes_to_sleep), style = TextStyle(fontSize = 26.sp))
                 NumberPicker(
                     dataStoreManager = dataStoreManager,
                     id = "minutes",
                     maxNumbers = 60,
-                    incrementNumber = 5,
+                    incrementNumber = 1,
                     onValueChange = { selectedMinute = it },
                 )
             }
@@ -150,21 +173,21 @@ fun SetupClockScreen(
                     .fillMaxWidth()
                     .padding(vertical = 8.dp)
                     .weight(1f, fill = true)
-                    .heightIn(min = 56.dp) // Ensure minimum height for the button
+                    .heightIn(min = 56.dp)
 
                 Button(
-                    enabled = scheduledTime == noAlarmText,
+                    enabled = scheduledTime == stringResource(R.string.no_alarm_scheduled),
                     modifier = buttonModifier,
                     onClick = {
                         if (notificationPermissionGranted) {
                             setupClockViewModel.scheduleAlarm(selectedHour, selectedMinute)
-                            setupClockViewModel.showSnackbar("Alarm Scheduled")
+                            setupClockViewModel.showSnackbar(context.getString(R.string.alarm_scheduled))
                         } else {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                                 launcher.launch(POST_NOTIFICATIONS)
                             } else {
                                 setupClockViewModel.showSnackbar(
-                                    "Notification permission is required to schedule the alarm",
+                                    context.getString(R.string.notification_permission_required),
                                 )
                             }
                         }
@@ -172,22 +195,22 @@ fun SetupClockScreen(
                 ) {
                     Text(
                         fontSize = 28.sp,
-                        text = "Sleep",
+                        text = stringResource(R.string.sleep_button_text),
                         textAlign = TextAlign.Center,
                     )
                 }
 
                 Button(
-                    enabled = scheduledTime != noAlarmText,
+                    enabled = scheduledTime != stringResource(R.string.no_alarm_scheduled),
                     modifier = buttonModifier,
                     onClick = {
                         setupClockViewModel.cancelAlarm(context)
-                        setupClockViewModel.showSnackbar("Alarm Cancelled")
+                        setupClockViewModel.showSnackbar(context.getString(R.string.alarm_cancelled))
                     },
                 ) {
                     Text(
                         fontSize = 28.sp,
-                        text = "Cancel",
+                        text = stringResource(R.string.cancel_button_text),
                     )
                 }
 
@@ -209,7 +232,7 @@ fun SetupClockScreen(
                                     RingtoneManager.EXTRA_RINGTONE_TYPE,
                                     RingtoneManager.TYPE_ALARM,
                                 )
-                                putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, "Select Alarm Ringtone")
+                                putExtra(RingtoneManager.EXTRA_RINGTONE_TITLE, context.getString(R.string.select_alarm_ringtone))
                                 putExtra(RingtoneManager.EXTRA_RINGTONE_SHOW_SILENT, false)
                                 putExtra(
                                     RingtoneManager.EXTRA_RINGTONE_EXISTING_URI,
@@ -227,7 +250,7 @@ fun SetupClockScreen(
                         ) {
                             Icon(
                                 painter = ringDesign,
-                                contentDescription = "Ring",
+                                contentDescription = stringResource(R.string.ring_content_description),
                                 modifier = Modifier
                                     .size(24.dp)
                                     .align(Alignment.Center),
@@ -242,7 +265,7 @@ fun SetupClockScreen(
                 modifier = Modifier.padding(16.dp),
                 action = {
                     IconButton(onClick = { setupClockViewModel.dismissSnackbar() }) {
-                        Icon(Icons.Default.Close, contentDescription = "Dismiss")
+                        Icon(Icons.Default.Close, contentDescription = stringResource(R.string.dismiss_content_description))
                     }
                 },
             ) {

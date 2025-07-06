@@ -23,8 +23,8 @@ class AppApplication : Application() {
             )
         }
 
-        val name = "Alarm Channel"
-        val descriptionText = "Channel for Alarm Manager"
+        val name = getString(R.string.alarm_channel_name)
+        val descriptionText = getString(R.string.alarm_channel_description)
         val importance = NotificationManager.IMPORTANCE_HIGH
         val channel = NotificationChannel("alarm_id", name, importance).apply {
             description = descriptionText

@@ -1,7 +1,6 @@
 package dev.sangui.wakeupright.ui.mainmenu
 
 import android.util.Log
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.PaddingValues
@@ -28,7 +27,6 @@ import dev.sangui.wakeupright.alarm.DataStoreManager
 import kotlinx.coroutines.flow.first
 import kotlin.math.absoluteValue
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun NumberPicker(
     dataStoreManager: DataStoreManager,
@@ -37,15 +35,19 @@ fun NumberPicker(
     incrementNumber: Int = 1,
     onValueChange: (Int) -> Unit,
 ) {
-    BoxWithConstraints(modifier = Modifier
-        .fillMaxWidth()
-        .padding(10.dp)) {
+    BoxWithConstraints(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(10.dp)
+    ) {
         val contentPadding = (maxWidth - 50.dp) / 2
         val itemSpacing = (maxWidth - contentPadding * 2) / 5
         val processMax = maxNumbers / incrementNumber
-        val pagerState = rememberPagerState(pageCount = {
-            processMax
-        })
+        val pagerState = rememberPagerState(
+            pageCount = {
+                processMax
+            }
+        )
 
         // Load the saved selected number when the composable is initialized
         LaunchedEffect(id) {
@@ -76,7 +78,6 @@ fun NumberPicker(
                     .graphicsLayer {
                         val pageOffset = ((pagerState.currentPage - page) + pagerState
                             .currentPageOffsetFraction).absoluteValue
-                        // Set the item alpha based on the distance from the center
                         val percentFromCenter = 1.0f - (pageOffset / (5f / 2f))
                         val opacity = 0.25f + (percentFromCenter * 0.75f).coerceIn(0f, 1f)
                         alpha = opacity
@@ -88,11 +89,11 @@ fun NumberPicker(
                 Text(
                     text = "${page * incrementNumber}",
                     color = MaterialTheme.colorScheme.primary,
-                    fontSize = 24.sp, // Scale font size based on screen width
+                    fontSize = 24.sp,
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight(),
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
                 )
             }
         }
