@@ -5,7 +5,6 @@ import android.app.Application
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import dev.sangui.wakeupright.alarm.AlarmConfig
@@ -18,6 +17,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import dev.sangui.wakeupright.alarm.AlarmEventBus
 import java.util.Calendar
 
 import dev.sangui.wakeupright.Constants
@@ -27,7 +27,8 @@ class SetupClockViewModel(
     private val alarmScheduler: AlarmScheduler,
     private val alarmConfig: AlarmConfig,
     private val dataStoreManager: DataStoreManager,
-    application: Application
+    private val alarmEventBus: AlarmEventBus,
+    application: Application,
 ) : AndroidViewModel(application) {
 
     private var alarmItem: AlarmItem? = null
@@ -49,6 +50,10 @@ class SetupClockViewModel(
                 }
                 _scheduledDate.value = calendar
                 notificationId = storedNotificationId
+            }
+
+            alarmEventBus.alarmDismissed.collect {
+                clearScheduledDate()
             }
         }
     }
@@ -82,7 +87,6 @@ class SetupClockViewModel(
             }
         } catch (e: Exception) {
             _scheduledDate.value = null
-            Log.e("SetupClockViewModel", getApplication<Application>().getString(R.string.error_scheduling_alarm), e)
         }
     }
 
@@ -116,9 +120,7 @@ class SetupClockViewModel(
                 )
                 cancelPendingIntent.send()
             }
-        } catch (e: Exception) {
-            Log.e("SetupClockViewModel", getApplication<Application>().getString(R.string.error_cancelling_alarm), e)
-        }
+        } catch (e: Exception) { }
     }
 
     fun clearScheduledDate() {

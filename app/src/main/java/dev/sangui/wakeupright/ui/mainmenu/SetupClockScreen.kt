@@ -54,15 +54,8 @@ import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import dev.sangui.wakeupright.alarm.DataStoreManager
 import java.text.SimpleDateFormat
-import androidx.compose.runtime.DisposableEffect
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.IntentFilter
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import java.util.Locale
-
 import androidx.compose.ui.res.stringResource
-import dev.sangui.wakeupright.Constants
 import dev.sangui.wakeupright.R
 
 
@@ -111,20 +104,7 @@ fun SetupClockScreen(
         }
     }
 
-    DisposableEffect(context) {
-        val alarmDismissReceiver = object : BroadcastReceiver() {
-            override fun onReceive(context: Context?, intent: Intent?) {
-                if (intent?.action == Constants.ACTION_ALARM_DISMISSED) {
-                    setupClockViewModel.clearScheduledDate()
-                }
-            }
-        }
-        LocalBroadcastManager.getInstance(context).registerReceiver(alarmDismissReceiver, IntentFilter(Constants.ACTION_ALARM_DISMISSED))
-
-        onDispose {
-            LocalBroadcastManager.getInstance(context).unregisterReceiver(alarmDismissReceiver)
-        }
-    }
+    
 
     Box(
         modifier = Modifier
@@ -156,7 +136,7 @@ fun SetupClockScreen(
                     dataStoreManager = dataStoreManager,
                     id = "minutes",
                     maxNumbers = 60,
-                    incrementNumber = 5,
+                    incrementNumber = 1,
                     onValueChange = { selectedMinute = it },
                 )
             }

@@ -4,14 +4,12 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import android.util.Log
 
 import dev.sangui.wakeupright.Constants
 
 class AlarmSchedulerImpl(private val context: Context) : AlarmScheduler {
 
     override fun schedule(alarmItem: AlarmItem) {
-        Log.d("AlarmScheduler", "Scheduling alarm for ${alarmItem.alarmTime.time}")
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(context, AlarmReceiver::class.java)
         intent.putExtra(Constants.EXTRA_MESSAGE, alarmItem.message)
@@ -20,12 +18,12 @@ class AlarmSchedulerImpl(private val context: Context) : AlarmScheduler {
             context,
             alarmItem.hashCode(),
             intent,
-            PendingIntent.FLAG_IMMUTABLE
+            PendingIntent.FLAG_IMMUTABLE,
         )
         alarmManager.setExactAndAllowWhileIdle(
             AlarmManager.RTC_WAKEUP,
             alarmItem.alarmTime.timeInMillis,
-            pendingIntent
+            pendingIntent,
         )
     }
 

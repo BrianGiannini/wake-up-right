@@ -5,12 +5,13 @@ import org.koin.core.module.dsl.viewModel
 import org.koin.dsl.module
 
 val uiModule = module {
-    viewModel {
+    viewModel<SetupClockViewModel> {
         SetupClockViewModel(
             alarmScheduler = get(),
             alarmConfig = get(),
             dataStoreManager = get(),
-            application = androidApplication()
+            alarmEventBus = get(),
+            application = androidApplication(),
         )
     }
 }

@@ -20,7 +20,6 @@ class RingToneProvider {
     fun playRingtone(context: Context) {
         CoroutineScope(Dispatchers.Main).launch {
             val ringtoneUriString = dataStoreManager.selectedRingtoneFlow().first()
-
             val ringtoneUri: Uri = ringtoneUriString?.toUri() ?: RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
 
             ringtone = RingtoneManager.getRingtone(context, ringtoneUri)
@@ -46,8 +45,6 @@ class RingToneProvider {
 
             // Play the ringtone
             ringtone?.play()
-
-
         }
     }
 

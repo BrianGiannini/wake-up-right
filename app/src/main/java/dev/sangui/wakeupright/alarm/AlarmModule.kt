@@ -9,4 +9,5 @@ val alarmModule = module {
     single<DataStoreManager> { DataStoreManager(androidContext()) }
     single<AlarmReceiver> { AlarmReceiver() }
     single<RingToneProvider> { RingToneProvider() }
+    single { AlarmEventBus() }
 }
