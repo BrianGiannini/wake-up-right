@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">刚刚好的闹钟</string>
+    <string name="app_name">睡眠时间</string>
     <string name="alarm_channel_name">闹钟频道</string>
     <string name="alarm_channel_description">闹钟管理器频道</string>
     <string name="notification_title">起床时间到了！</string>

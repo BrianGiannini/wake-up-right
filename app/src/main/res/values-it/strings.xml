@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">DormiPer</string>
+    <string name="alarm_channel_name">Canale Allarme</string>
+    <string name="alarm_channel_description">Canale per Gestore Allarmi</string>
+    <string name="notification_title">È ora di svegliarsi!</string>
+    <string name="notification_big_text">La tua sveglia sta suonando. Tocca per aprire l\'app o disattivarla.</string>
+    <string name="notification_dismiss_action">Ignora</string>
+    <string name="no_alarm_scheduled">Nessun allarme programmato</string>
+    <string name="notification_permission_granted">Permesso di notifica concesso</string>
+    <string name="notification_permission_denied">Permesso di notifica negato, si prega di abilitarlo nelle impostazioni dell\'app</string>
+    <string name="hours_to_sleep">Ore di sonno</string>
+    <string name="minutes_to_sleep">Minuti di sonno</string>
+    <string name="alarm_scheduled">Allarme programmato</string>
+    <string name="notification_permission_required">Il permesso di notifica è richiesto per programmare l\'allarme</string>
+    <string name="sleep_button_text">Dormi</string>
+    <string name="alarm_cancelled">Allarme annullato</string>
+    <string name="cancel_button_text">Annulla</string>
+    <string name="select_alarm_ringtone">Seleziona Suoneria Allarme</string>
+    <string name="ring_content_description">Suona</string>
+    <string name="dismiss_content_description">Ignora</string>
+    <string name="alarm_message">Svegliati!</string>
+    <string name="error_scheduling_alarm">Errore durante la programmazione dell\'allarme</string>
+    <string name="error_cancelling_alarm">Errore durante l\'annullamento dell\'allarme</string>
+</resources>

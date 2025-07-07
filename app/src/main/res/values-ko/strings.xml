@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">딱 좋은 알람</string>
+    <string name="app_name">수면 시간</string>
     <string name="alarm_channel_name">알람 채널</string>
     <string name="alarm_channel_description">알람 관리자용 채널</string>
     <string name="notification_title">일어날 시간입니다!</string>

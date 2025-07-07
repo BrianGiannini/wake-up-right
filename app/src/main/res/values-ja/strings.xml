@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ちょうどいい目覚まし</string>
+    <string name="app_name">睡眠時間</string>
     <string name="alarm_channel_name">アラームチャンネル</string>
     <string name="alarm_channel_description">アラームマネージャー用チャンネル</string>
     <string name="notification_title">起きる時間です！</string>

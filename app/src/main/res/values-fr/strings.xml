@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Wake up Right</string>
+    <string name="app_name">SleepFor</string>
     <string name="alarm_channel_name">Canal d\'alarme</string>
     <string name="alarm_channel_description">Canal pour le gestionnaire d\'alarmes</string>
     <string name="notification_title">Il est temps de se réveiller !</string>
